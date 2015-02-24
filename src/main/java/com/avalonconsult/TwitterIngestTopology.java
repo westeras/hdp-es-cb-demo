@@ -30,7 +30,7 @@ public class TwitterIngestTopology {
 
     public static void main(String[] args) {
 
-        PropertiesUtility propUtil = new PropertiesUtility("topology.properties");
+        PropertiesUtility propUtil = new PropertiesUtility("/topology.properties");
         Properties properties = propUtil.getProperties();
 
         String zkHosts = properties.getProperty("zkHosts");

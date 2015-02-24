@@ -13,12 +13,12 @@ public class TwitterProducer {
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(TwitterProducer.class);
 
     public static void main(final String[] args) throws TwitterException, IOException {
-		if (args.length != 1) {
+		if (args.length < 1) {
 			System.out.println("Usage: com.avalonconsult.TwitterProducer '<queryTerms>'");
 			System.exit(-1);
 		}
 
-        PropertiesUtility propUtil = new PropertiesUtility("topology.properties");
+        PropertiesUtility propUtil = new PropertiesUtility("/topology.properties");
         Properties properties = propUtil.getProperties();
 
         StatusListener listener = new TwitterStatusListener(properties.getProperty("topic"), properties.getProperty("brokerHosts"));

@@ -1,9 +1,6 @@
 package com.avalonconsult;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 
 /**
@@ -14,22 +11,15 @@ public class PropertiesUtility {
     private Properties properties;
 
     public PropertiesUtility(String fileName) {
-        File file = new File("src/main/resources/" + fileName);
 
-        FileInputStream fileInput = null;
-        Properties props = new Properties();
+        InputStream is = getClass().getResourceAsStream(fileName);
+        this.properties = new Properties();
 
         try {
-            fileInput = new FileInputStream(file);
-            props.load(fileInput);
-            fileInput.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            this.properties.load(is);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        this.properties = props;
     }
 
     public Properties getProperties() {

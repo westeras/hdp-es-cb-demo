@@ -6,6 +6,7 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
+import backtype.storm.tuple.Values;
 import com.google.code.geocoder.Geocoder;
 import com.google.code.geocoder.GeocoderRequestBuilder;
 import com.google.code.geocoder.model.*;
@@ -91,6 +92,9 @@ public class GeoEnrichmentBolt extends BaseRichBolt {
             tweet.put("latitude", null);
             tweet.put("longitude", null);
         }
+
+        String tweetString = tweet.toJSONString();
+        collector.emit(new Values(tweetString));
     }
 
     @Override
