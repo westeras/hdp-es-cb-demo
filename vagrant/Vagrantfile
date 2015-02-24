@@ -1,0 +1,40 @@
+# -*- mode: ruby -*-
+# # vi: set ft=ruby :
+
+machines = [
+#  {:name => "couchbase.demo", :ip => "192.168.56.41", :ansible => "couchbase-single.yml"},
+  {:name => "elasticsearch.demo", :ip => "192.168.56.42", :ansible => "elasticsearch-single.yml"}
+]
+
+Vagrant.configure(2) do |config|
+  config.ssh.insert_key = false
+
+  if Vagrant.has_plugin?("vagrant-hostmanager")
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = true
+    config.hostmanager.ignore_private_ip = false
+    config.hostmanager.include_offline = true
+  end
+
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :machine
+  end
+
+  machines.each do |machine|
+    config.vm.define machine[:name] do |vmconfig|
+      vmconfig.vm.box = "chef/centos-6.6"
+      vmconfig.vm.provider "virtualbox" do |v|
+        v.memory = 1024
+        v.cpus = 4
+      end
+
+      vmconfig.vm.hostname = machine[:name]
+      vmconfig.vm.network :private_network, ip: machine[:ip]
+
+      vmconfig.vm.provision "ansible" do |ansible|
+        ansible.playbook = machine[:ansible]
+	ansible.verbose = "vvvv"
+      end
+    end
+  end
+end

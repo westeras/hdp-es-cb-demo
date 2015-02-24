@@ -1,0 +1,28 @@
+---
+- name: Deploy Couchbase
+  hosts: all
+  sudo: true
+  tasks:
+  - name: Install pkgconfig
+    yum: name=pkgconfig state=latest
+
+  - name: Install openssl
+    yum: name=openssl098e state=latest
+
+  - name: Check if Couchbase rpm exists
+    stat: path=/vagrant/rpms/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm
+    register: couchbase_rpm
+
+  - name: Create rpms directory
+    file: path=/vagrant/rpms state=directory
+    when: couchbase_rpm.stat.exists == false
+
+  - name: Download the rpm
+    get_url: url="http://packages.couchbase.com/releases/3.0.2/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm" dest=/vagrant/rpms
+    when: couchbase_rpm.stat.exists == False
+
+  - name: Install Couchbase rpm
+    yum: name=/vagrant/rpms/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm state=present
+
+  - name: Initialize Couchbase cluster
+    shell: "sleep 15; /opt/couchbase/bin/couchbase-cli cluster-init -c 127.0.0.1:8091 --cluster-init-username=couchbase --cluster-init-password=couchbase --cluster-init-port=8091 --cluster-init-ramsize=796"
