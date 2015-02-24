@@ -54,10 +54,17 @@ public class GeoEnrichmentBolt extends BaseRichBolt {
         String latString = (String) jsonObject.get("latitude");
         String lonString = (String) jsonObject.get("longitude");
 
+        JSONObject tweet = new JSONObject();
+        tweet.put("user", user);
+        tweet.put("name", name);
+        tweet.put("text", text);
+
         if (null != latString && null != lonString) {
             double latitude = Double.parseDouble(latString);
             double longitude = Double.parseDouble(lonString);
 
+            tweet.put("latitude", latitude);
+            tweet.put("longitude", longitude);
             LOG.info("tweet had coords, lat: " + latString + ", lon: " + lonString);
         } else if (null != location && !location.equals("")) {
             this.request = new GeocoderRequestBuilder().setAddress(location).getGeocoderRequest();
@@ -74,12 +81,15 @@ public class GeoEnrichmentBolt extends BaseRichBolt {
                 coords[0] = latitudeLongitude.getLat().floatValue();
                 coords[1] = latitudeLongitude.getLng().floatValue();
 
-                LOG.info("location: " + location + ", latitude: " + coords[0] + ", longitude: " + coords[1]);
+                tweet.put("latitude", coords[0]);
+                tweet.put("longitude", coords[1]);
             } else {
-                LOG.info("location did not provide sufficient information");
+                tweet.put("latitude", null);
+                tweet.put("longitude", null);
             }
         } else {
-            LOG.info("no location available");
+            tweet.put("latitude", null);
+            tweet.put("longitude", null);
         }
     }
 

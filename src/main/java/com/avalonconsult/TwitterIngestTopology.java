@@ -62,8 +62,8 @@ public class TwitterIngestTopology {
                 .withSyncPolicy(syncPolicy);
 
         topologyBuilder.setSpout("kafka-spout", new KafkaSpout(spoutConfig));
-        topologyBuilder.setBolt("hdfsBolt", hdfsBolt).shuffleGrouping("kafka-spout");
-        topologyBuilder.setBolt("geoEnrichment", new GeoEnrichmentBolt()).shuffleGrouping("kafka-spout");
+        topologyBuilder.setBolt("geo-enrichment", new GeoEnrichmentBolt()).shuffleGrouping("kafka-spout");
+        topologyBuilder.setBolt("hdfs-bolt", hdfsBolt).shuffleGrouping("geo-enrichment");
 
         Config conf = new Config();
 
