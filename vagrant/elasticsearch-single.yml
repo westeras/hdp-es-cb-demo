@@ -1,0 +1,34 @@
+---
+- name: Deploy Elasticsearch
+  hosts: all
+  sudo: true
+  tasks:
+  - name: Install Latest Java
+    yum: name=java state=latest
+
+  - name: Check if Elasticsearch rpm exists
+    stat: path=/vagrant/rpms/elasticsearch-1.4.4.noarch.rpm
+    register: elasticsearch_rpm
+
+  - name: Create rpms directory
+    file: path=/vagrant/rpms state=directory
+    when: elasticsearch_rpm.stat.exists == false
+
+  - name: Download the rpm
+    get_url: url="https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.4.noarch.rpm" dest=/vagrant/rpms
+    when: elasticsearch_rpm.stat.exists == False
+
+  - name: Install Elasticsearch rpm
+    yum: name=/vagrant/rpms/elasticsearch-1.4.4.noarch.rpm state=present
+
+  - name: Start Elasticsearch
+    service: name=elasticsearch state=started
+
+  - name: Install Marvel Plugin
+    shell: "/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest"
+
+  - name: Install Couchbase Transport Plugin
+    shell: "/usr/share/elasticsearch/bin/plugin -install transport-couchbase -url http://packages.couchbase.com.s3.amazonaws.com/releases/elastic-search-adapter/2.0.0/elasticsearch-transport-couchbase-2.0.0.zip"
+
+  - name: Configure Couchbase Transport Credentials
+    shell: "echo 'couchbase.password: couchbase' >> /etc/elasticsearch/elasticsearch.yml ; echo 'couchbase.username: couchbase' >> /etc/elasticsearch/elasticsearch.yml"
