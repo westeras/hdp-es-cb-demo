@@ -2,7 +2,6 @@ package com.avalonconsult;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
-import backtype.storm.generated.StormTopology;
 import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.utils.Utils;
@@ -19,10 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import storm.kafka.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -35,7 +30,8 @@ public class TwitterIngestTopology {
 
     public static void main(String[] args) {
 
-        Properties properties = loadPropertiesFile();
+        PropertiesUtility propUtil = new PropertiesUtility("topology.properties");
+        Properties properties = propUtil.getProperties();
 
         String zkHosts = properties.getProperty("zkHosts");
         String topic = properties.getProperty("topic");
@@ -73,25 +69,4 @@ public class TwitterIngestTopology {
         cluster.killTopology("test");
         cluster.shutdown();
     }
-
-    private static Properties loadPropertiesFile() {
-
-        File file = new File("src/main/resources/topology.properties");
-
-        FileInputStream fileInput = null;
-        Properties properties = new Properties();
-
-        try {
-            fileInput = new FileInputStream(file);
-            properties.load(fileInput);
-            fileInput.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties;
-    }
-
 }
