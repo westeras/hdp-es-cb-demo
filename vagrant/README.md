@@ -3,10 +3,8 @@ This Vagrantfile will boot up a single node Couchbase environment and a single n
 Prereqs:
 --------
 
-* Installed Virtualbox
-
-* Installed Vagrant
-
+* Installed Virtualbox: https://www.virtualbox.org/wiki/Downloads
+* Installed Vagrant: http://www.vagrantup.com/downloads.html
 * Installed Vagrant Plugins
 
     ```sh
@@ -16,11 +14,15 @@ Prereqs:
 
 * Install Ansible
 
+    ```sh
+    brew install ansible
+    ```
+
 Getting Started
 ---------------
 
 Simple run vagrant from this directory
 
-    ```sh
-    vagrant up
-    ```
+```sh
+vagrant up
+```
