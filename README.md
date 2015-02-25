@@ -2,13 +2,28 @@
 
 This project contains an integrated Twitter/Kafka/Storm workflow. To run:
 
-Setup
+Setup Project
 
-1. clone project
-2. add a twitter4j.properties with consumer and api keys and secrets
-3. open topology.properties and change values to match your system
-4. cd into hdp-es-cb-demo, run 'mvn clean package'
-5. create a Kafka topic matching your value for 'topic' in topology.properties
+1. fork project
+2. clone your fork of the project to your machine
+3. add this project as the upstream source
+
+    ```sh
+    git remote add upstream https://github.com/westeras/hdp-es-cb-demo
+    ```
+4. create a branch for yourself
+
+    ```sh
+    git branch [branch-name]
+    git checkout [branch-name]
+    ```
+
+Setup Storm Topology
+
+1. add a twitter4j.properties with consumer and api keys and secrets
+2. open topology.properties and change values to match your system
+3. cd into hdp-es-cb-demo, run 'mvn clean package'
+4. create a Kafka topic matching your value for 'topic' in topology.properties
 
 To run
 
