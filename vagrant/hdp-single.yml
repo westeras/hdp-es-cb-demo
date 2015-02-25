@@ -1,0 +1,22 @@
+---
+- name: Deploy HDP 2.2
+  hosts: all
+  sudo: true
+  tasks:
+  - name: Install latest Java
+    yum: name=java state=latest
+
+  - name: Install latest wget
+    yum: name=wget state=latest
+
+  - name: Install ntp daemon
+    yum: name=ntp state=latest
+
+  - name: Update OpenSSL
+    yum: name=openssl state=latest
+
+  - name: Run configuration script
+    script: init_hdp.sh
+
+  - name: Install PyCurl module
+    yum: name=python-pycurl state=latest

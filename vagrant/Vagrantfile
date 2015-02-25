@@ -3,7 +3,8 @@
 
 machines = [
   {:name => "couchbase.demo", :ip => "192.168.56.41", :ansible => "couchbase-single.yml"},
-  {:name => "elasticsearch.demo", :ip => "192.168.56.42", :ansible => "elasticsearch-single.yml"}
+  {:name => "elasticsearch.demo", :ip => "192.168.56.42", :ansible => "elasticsearch-single.yml"},
+  {:name => "hdp.demo", :ip => "192.168.56.43", :ansible => "hdp-single.yml"}
 ]
 
 Vagrant.configure(2) do |config|
