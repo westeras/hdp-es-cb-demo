@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "global" : {
+      "nagios-env" : {
         "nagios_contact": "root@hdp.demo"
       }
     }
@@ -10,38 +10,50 @@
     {
       "name" : "host_group_1",     
       "components" : [
-        {
-          "name" : "NAMENODE"
-        },
-        {
-          "name" : "SECONDARY_NAMENODE"
-        },       
-        {
-          "name" : "DATANODE"
-        },
-        {
-          "name" : "HDFS_CLIENT"
-        },
-        {
-          "name" : "RESOURCEMANAGER"
-        },
-        {
-          "name" : "APP_TIMELINE_SERVER"
-        },
-        {
-          "name" : "NODEMANAGER"
-        },
-        {
-          "name" : "YARN_CLIENT"
+      {
+          "name" : "PIG"
         },
         {
           "name" : "HISTORYSERVER"
         },
         {
-          "name" : "MAPREDUCE2_CLIENT"
+          "name" : "KAFKA_BROKER"
         },
         {
-          "name" : "TEZ_CLIENT"
+          "name" : "NAMENODE"
+        },
+        {
+          "name" : "SUPERVISOR"
+        },
+        {
+          "name" : "HCAT"
+        },
+        {
+          "name" : "SLIDER"
+        },
+        {
+          "name" : "AMBARI_SERVER"
+        },
+        {
+          "name" : "APP_TIMELINE_SERVER"
+        },
+        {
+          "name" : "HDFS_CLIENT"
+        },
+        {
+          "name" : "HIVE_CLIENT"
+        },
+        {
+          "name" : "NODEMANAGER"
+        },
+        {
+          "name" : "DATANODE"
+        },
+        {
+          "name" : "WEBHCAT_SERVER"
+        },
+        {
+          "name" : "RESOURCEMANAGER"
         },
         {
           "name" : "ZOOKEEPER_SERVER"
@@ -50,49 +62,43 @@
           "name" : "ZOOKEEPER_CLIENT"
         },
         {
-          "name" : "GANGLIA_SERVER"
-        },
-        {
-          "name" : "GANGLIA_MONITOR"
-        },
-        {
-          "name" : "MYSQL_SERVER"
-        },
-        {
-          "name" : "HIVE_METASTORE"
+          "name" : "STORM_UI_SERVER"
         },
         {
           "name" : "HIVE_SERVER"
         },
         {
-          "name" : "HIVE_CLIENT"
+          "name" : "NAGIOS_SERVER"
         },
         {
-          "name" : "HCAT"
+          "name" : "SECONDARY_NAMENODE"
         },
         {
-          "name" : "WEBHCAT_SERVER"
+          "name" : "TEZ_CLIENT"
         },
         {
-          "name" : "PIG"
+          "name" : "HIVE_METASTORE"
         },
         {
-          "name" : "NIMBUS"
+          "name" : "GANGLIA_SERVER"
+        },
+        {
+          "name" : "YARN_CLIENT"
+        },
+        {
+          "name" : "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name" : "MYSQL_SERVER"
+        },
+        {
+          "name" : "GANGLIA_MONITOR"
         },
         {
           "name" : "DRPC_SERVER"
         },
         {
-          "name" : "SUPERVISOR"
-        },
-        {
-          "name" : "STORM_REST_API"
-        },
-        {
-          "name" : "STORM_UI_SERVER"
-        },
-        {
-          "name" : "NAGIOS_SERVER"
+          "name" : "NIMBUS"
         }
       ],
       "cardinality" : "1"

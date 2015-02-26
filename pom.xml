@@ -67,6 +67,11 @@
             <artifactId>geocoder-java</artifactId>
             <version>0.16</version>
         </dependency>
+        <dependency>
+            <groupId>com.couchbase.client</groupId>
+            <artifactId>java-client</artifactId>
+            <version>2.1.0</version>
+        </dependency>
     </dependencies>
 
     <repositories>

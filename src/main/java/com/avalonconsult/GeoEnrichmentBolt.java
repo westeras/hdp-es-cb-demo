@@ -48,6 +48,7 @@ public class GeoEnrichmentBolt extends BaseRichBolt {
             e.printStackTrace();
         }
 
+        String id = (String) jsonObject.get("id");
         String user = (String) jsonObject.get("user");
         String name = (String) jsonObject.get("name");
         String text = (String) jsonObject.get("text");
@@ -56,6 +57,7 @@ public class GeoEnrichmentBolt extends BaseRichBolt {
         String lonString = (String) jsonObject.get("longitude");
 
         JSONObject tweet = new JSONObject();
+        tweet.put("id", id);
         tweet.put("user", user);
         tweet.put("name", name);
         tweet.put("text", text);
