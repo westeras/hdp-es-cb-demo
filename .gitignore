@@ -7,3 +7,8 @@
 log/
 target/
 
+.vagrant/
+vagrant/rpms/
+
+dependency-reduced-pom.xml
+twitter4j.properties
