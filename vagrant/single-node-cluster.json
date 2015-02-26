@@ -345,7 +345,8 @@
             "nagios-env": {
                 "nagios_group": "nagios",
                 "nagios_user": "nagios",
-                "nagios_web_login": "nagiosadmin"
+                "nagios_web_login": "nagiosadmin",
+                "nagios_contact":"root@hdp.demo"
             }
         },
         {
