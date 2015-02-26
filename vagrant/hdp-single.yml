@@ -35,4 +35,5 @@
     register: ambari_start
 
   - name: Run Ambari host registration script
+    sudo: no
     script: blueprint.py
