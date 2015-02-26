@@ -51,7 +51,7 @@ print "Pausing 10 seconds before submitting blueprint to Ambari"
 time.sleep(10)
 print "Submitting blueprint to Ambari"
 url = 'http://{0}:8080/api/v1/blueprints/single-node-cluster'.format(hostname)
-with open("single-node-cluster.json", "r") as blueprint:
+with open("/vagrant/single-node-cluster.json", "r") as blueprint:
     content = blueprint.read()
 
 r = requests.post(url, data=json.dumps(content), headers=headers, auth=('admin', 'admin'))
@@ -60,7 +60,7 @@ print "Pausing 10 seconds before submitting cluster topology"
 time.sleep(10)
 print 'Submitting cluster topology to Ambari'
 url = 'http://{0}:8080/api/v1/clusters/single-node-cluster'.format(hostname)
-with open("single-node-mapping.json", "r") as cluster:
+with open("/vagrant/single-node-mapping.json", "r") as cluster:
     content = cluster.read()
 
 r = requests.post(url, data=json.dumps(content), headers=headers, auth=('admin', 'admin'))
