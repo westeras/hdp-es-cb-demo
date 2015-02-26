@@ -2,6 +2,10 @@ package com.avalonconsult;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
+import backtype.storm.StormSubmitter;
+import backtype.storm.generated.AlreadyAliveException;
+import backtype.storm.generated.AuthorizationException;
+import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.utils.Utils;
@@ -60,13 +64,25 @@ public class TwitterIngestTopology {
         topologyBuilder.setSpout("kafka-spout", new KafkaSpout(spoutConfig));
         topologyBuilder.setBolt("geo-enrichment", new GeoEnrichmentBolt()).shuffleGrouping("kafka-spout");
         topologyBuilder.setBolt("hdfs-bolt", hdfsBolt).shuffleGrouping("geo-enrichment");
+        topologyBuilder.setBolt("couchbase-bolt", new CouchbaseBolt()).shuffleGrouping("geo-enrichment");
 
         Config conf = new Config();
+        conf.setNumWorkers(1);
 
-        LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("test", conf, topologyBuilder.createTopology());
-        Utils.sleep(60000);
-        cluster.killTopology("test");
-        cluster.shutdown();
+        try {
+            StormSubmitter.submitTopology("twitter-ingest-topology", conf, topologyBuilder.createTopology());
+        } catch (AlreadyAliveException e) {
+            e.printStackTrace();
+        } catch (InvalidTopologyException e) {
+            e.printStackTrace();
+        } catch (AuthorizationException e) {
+            e.printStackTrace();
+        }
+
+//        LocalCluster cluster = new LocalCluster();
+//        cluster.submitTopology("test", conf, topologyBuilder.createTopology());
+//        Utils.sleep(60000);
+//        cluster.killTopology("test");
+//        cluster.shutdown();
     }
 }

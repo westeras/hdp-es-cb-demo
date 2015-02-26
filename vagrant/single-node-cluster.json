@@ -10,9 +10,6 @@
     {
       "name" : "host_group_1",     
       "components" : [
-      {
-          "name" : "PIG"
-        },
         {
           "name" : "HISTORYSERVER"
         },
@@ -29,9 +26,6 @@
           "name" : "HCAT"
         },
         {
-          "name" : "SLIDER"
-        },
-        {
           "name" : "AMBARI_SERVER"
         },
         {
@@ -39,9 +33,6 @@
         },
         {
           "name" : "HDFS_CLIENT"
-        },
-        {
-          "name" : "HIVE_CLIENT"
         },
         {
           "name" : "NODEMANAGER"
@@ -59,40 +50,19 @@
           "name" : "ZOOKEEPER_SERVER"
         },
         {
-          "name" : "ZOOKEEPER_CLIENT"
-        },
-        {
           "name" : "STORM_UI_SERVER"
         },
         {
           "name" : "HIVE_SERVER"
         },
         {
-          "name" : "NAGIOS_SERVER"
-        },
-        {
           "name" : "SECONDARY_NAMENODE"
-        },
-        {
-          "name" : "TEZ_CLIENT"
         },
         {
           "name" : "HIVE_METASTORE"
         },
         {
-          "name" : "GANGLIA_SERVER"
-        },
-        {
-          "name" : "YARN_CLIENT"
-        },
-        {
-          "name" : "MAPREDUCE2_CLIENT"
-        },
-        {
           "name" : "MYSQL_SERVER"
-        },
-        {
-          "name" : "GANGLIA_MONITOR"
         },
         {
           "name" : "DRPC_SERVER"

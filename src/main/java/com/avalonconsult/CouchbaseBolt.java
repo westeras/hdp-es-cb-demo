@@ -30,8 +30,8 @@ public class CouchbaseBolt extends BaseRichBolt {
     @Override
     public void prepare(Map map, TopologyContext topologyContext, OutputCollector outputCollector) {
         this.collector = outputCollector;
-        this.cluster = CouchbaseCluster.create();
-        this.bucket = this.cluster.openBucket();
+        this.cluster = CouchbaseCluster.create("couchbase.demo");
+        this.bucket = this.cluster.openBucket("demo");
         this.parser = new JSONParser();
     }
 
