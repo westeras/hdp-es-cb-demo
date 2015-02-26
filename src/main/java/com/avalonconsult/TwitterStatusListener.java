@@ -39,6 +39,7 @@ public class TwitterStatusListener implements StatusListener {
     @Override
     public void onStatus(Status status) {
         JSONObject tweet = new JSONObject();
+        tweet.put("id", status.getId());
         tweet.put("user", status.getUser().getScreenName());
         tweet.put("name", status.getUser().getName());
         tweet.put("location", status.getUser().getLocation());

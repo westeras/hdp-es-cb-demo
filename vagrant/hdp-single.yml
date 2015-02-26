@@ -18,5 +18,18 @@
   - name: Run configuration script
     script: init_hdp.sh
 
-  - name: Install PyCurl module
-    yum: name=python-pycurl state=latest
+  - name: Install epel repo
+    yum: name=epel-release state=latest
+
+  - name: Install python pip
+    yum: name=python-pip state=latest
+
+  - name: Install Python requests module
+    pip: name=requests
+
+  - name: Install vim
+    yum: name=vim state=latest
+
+  - name: Ensure Ambari server running
+    service: name=ambari-server state=started
+    register: ambari_start

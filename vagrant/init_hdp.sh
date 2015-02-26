@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 # Clear yum cache
 yum clean all
 
@@ -44,7 +46,6 @@ wget -nv http://public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.7.0/a
 yum -y install ambari-server
 
 # Setup and start Ambari
-ambari-server setup -s
-ambari-server start
+sudo ambari-server setup -s
 
 sleep 5
