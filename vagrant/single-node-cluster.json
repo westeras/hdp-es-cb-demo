@@ -51,8 +51,6 @@
                 "fs.defaultFS": "hdfs://%HOSTGROUP::host_group_1%:8020",
                 "fs.trash.interval": "360",
                 "hadoop.http.authentication.simple.anonymous.allowed": "true",
-                "hadoop.proxyuser.falcon.groups": "users",
-                "hadoop.proxyuser.falcon.hosts": "*",
                 "hadoop.proxyuser.hbase.groups": "users",
                 "hadoop.proxyuser.hbase.hosts": "*",
                 "hadoop.proxyuser.hcat.groups": "*",
@@ -830,7 +828,7 @@
                     "name": "SUPERVISOR"
                 },
                 {
-                    "name": "FALCON_SERVER"
+                    "name": "WEBHCAT_SERVER"
                 },
                 {
                     "name": "HCAT"
