@@ -6,8 +6,8 @@ set -x
 yum clean all
 
 # Setup /etc/hosts with eth0 ip address and hostname
-export ETH0IP=$(ip addr show eth0 | grep "inet " | awk '{ print $2 }' | cut -d'/' -f 1)
-echo "$ETH0IP $(hostname) $(hostname -s)" >> /etc/hosts
+# export ETH0IP=$(ip addr show eth0 | grep "inet " | awk '{ print $2 }' | cut -d'/' -f 1)
+# echo "$ETH0IP $(hostname) $(hostname -s)" >> /etc/hosts
 
 # Disable SELINUX
 sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux

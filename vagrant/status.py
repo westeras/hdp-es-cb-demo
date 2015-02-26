@@ -16,10 +16,9 @@ for task in tasks:
     r = requests.get(url, headers=headers, auth=('admin', 'admin'))
     response = json.loads(r.text)
 
-    command = response["Tasks"]["command"]
     command_detail = response["Tasks"]["command_detail"]
 
-    print 'Waiting on {0} of {1}'.format(command, command_detail)
+    print 'Waiting on {0}'.format(command_detail)
 
     while True:
         r = requests.get(url, headers=headers, auth=('admin', 'admin'))
