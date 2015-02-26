@@ -1,2 +1,13 @@
+# Vagrant
 .vagrant
 deps
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Maven
+log/
+target/
+
