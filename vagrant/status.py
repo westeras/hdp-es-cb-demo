@@ -2,7 +2,7 @@
 
 import json, sys, time, requests
 
-url = sys.argv[1]
+url = http://hdp.demo:8080/api/v1/clusters/single-node-cluster/requests/1
 print url
 
 headers = {'X-Requested-By':'ambari', 'Content-Type':'application/json'}
