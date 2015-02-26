@@ -31,5 +31,8 @@
     yum: name=vim state=latest
 
   - name: Ensure Ambari server running
-    service: name=ambari-server state=started
+    service: name=ambari-server state=restarted
     register: ambari_start
+
+  - name: Run Ambari host registration script
+    script: blueprint.py

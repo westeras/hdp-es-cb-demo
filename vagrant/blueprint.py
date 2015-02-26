@@ -8,6 +8,7 @@ home = expanduser("~")
 
 print hostname
 
+time.sleep(5)
 url = 'http://{0}:8080/api/v1/bootstrap'.format(hostname)
 headers = {'X-Requested-By':'ambari', 'Content-Type':'application/json'}
 
@@ -65,8 +66,7 @@ with open("single-node-mapping.json", "r") as cluster:
 r = requests.post(url, data=json.dumps(content), headers=headers, auth=('admin', 'admin'))
 
 print
-print r.text
-response = ast.literal_eval(r.text)
+response = json.loads(r.text)
 url = response["href"]
 print 'Getting url for polling HDP install'
 print url
