@@ -6,8 +6,6 @@ from os.path import expanduser
 hostname = socket.gethostname()
 home = expanduser("~")
 
-print hostname
-
 time.sleep(5)
 url = 'http://{0}:8080/api/v1/bootstrap'.format(hostname)
 headers = {'X-Requested-By':'ambari', 'Content-Type':'application/json'}
