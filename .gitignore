@@ -16,3 +16,5 @@ vagrant/rpms/
 
 dependency-reduced-pom.xml
 twitter4j.properties
+
+*.jar
