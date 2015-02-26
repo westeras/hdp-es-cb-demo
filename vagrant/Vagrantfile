@@ -2,8 +2,9 @@
 # # vi: set ft=ruby :
 
 machines = [
-  {:name => "couchbase.demo", :ip => "192.168.56.41", :ansible => "couchbase-single.yml"},
-  {:name => "elasticsearch.demo", :ip => "192.168.56.42", :ansible => "elasticsearch-single.yml"}
+  {:name => "couchbase.demo", :ip => "192.168.56.41", :cpus => 4, :memory => 1024, :ansible => "couchbase-single.yml"},
+  {:name => "elasticsearch.demo", :ip => "192.168.56.42", :cpus => 4, :memory => 1024, :ansible => "elasticsearch-single.yml"},
+  {:name => "hdp.demo", :ip => "192.168.56.43", :cpus => 4, :memory => 4096, :ansible => "hdp-single.yml"}
 ]
 
 Vagrant.configure(2) do |config|
@@ -24,8 +25,8 @@ Vagrant.configure(2) do |config|
     config.vm.define machine[:name] do |vmconfig|
       vmconfig.vm.box = "chef/centos-6.6"
       vmconfig.vm.provider "virtualbox" do |v|
-        v.memory = 1024
-        v.cpus = 4
+        v.memory = machine[:memory]
+        v.cpus = machine[:cpus]
       end
 
       vmconfig.vm.hostname = machine[:name]

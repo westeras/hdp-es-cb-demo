@@ -48,25 +48,28 @@ public class GeoEnrichmentBolt extends BaseRichBolt {
             e.printStackTrace();
         }
 
+        String id = Long.toString((Long) jsonObject.get("id"));
         String user = (String) jsonObject.get("user");
         String name = (String) jsonObject.get("name");
         String text = (String) jsonObject.get("text");
         String location = (String) jsonObject.get("location");
-        String latString = (String) jsonObject.get("latitude");
-        String lonString = (String) jsonObject.get("longitude");
+
+        Object latObject = jsonObject.get("latitude");
+        Object lonObject = jsonObject.get("longitude");
 
         JSONObject tweet = new JSONObject();
+        tweet.put("id", id);
         tweet.put("user", user);
         tweet.put("name", name);
         tweet.put("text", text);
 
-        if (null != latString && null != lonString) {
-            double latitude = Double.parseDouble(latString);
-            double longitude = Double.parseDouble(lonString);
+        if (null != latObject && null != lonObject) {
+            double latitude = (Double) latObject;
+            double longitude = (Double) lonObject;
 
             tweet.put("latitude", latitude);
             tweet.put("longitude", longitude);
-            LOG.info("tweet had coords, lat: " + latString + ", lon: " + lonString);
+            LOG.info("tweet had coords, lat: " + latObject + ", lon: " + lonObject);
         } else if (null != location && !location.equals("")) {
             this.request = new GeocoderRequestBuilder().setAddress(location).getGeocoderRequest();
             try {
