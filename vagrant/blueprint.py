@@ -64,9 +64,3 @@ with open("/vagrant/single-node-mapping.json", "r") as cluster:
     content = cluster.read()
 
 r = requests.post(url, data=json.dumps(content), headers=headers, auth=('admin', 'admin'))
-
-print
-response = json.loads(r.text)
-url = response["href"]
-print 'Getting url for polling HDP install'
-print url
