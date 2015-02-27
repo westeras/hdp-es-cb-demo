@@ -91,12 +91,15 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
    ```sh
    java -cp /vagrant/storm-search-demo-1.0-SNAPSHOT.jar com.avalonconsult.TwitterProducer <query terms>
    ```
+   Note: choose query terms that won't return a massive influx of tweets and overwhelm your vm
 
-3. Run Storm topology:
+3. In a different terminal window, run the Storm topology:
 
    ```sh
    storm jar /vagrant/storm-search-demo-1.0-SNAPSHOT.jar com.avalonconsult.TwitterIngestTopology
    ```
+
+At this point, you should be able to see things happening in the Storm UI (http://hdp.demo:8744/).  Click on twitter-ingest-topology to see statistics and throughput.  Visit the Couchbase UI to see documents as they are inserted into the document store (http://couchbase.demo:8091/, couchbase:couchbase for user:pass).  Finally, you can query the Elasticsearch instance and view documents (http://elasticsearch.demo:9200/demo/couchbaseDocument/_search?pretty&q=*)
 
 ## Troubleshooting
 ### Ambari fails to install components
