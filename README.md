@@ -97,3 +97,7 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
    ```sh
    storm jar /vagrant/storm-search-demo-1.0-SNAPSHOT.jar com.avalonconsult.TwitterIngestTopology
    ```
+
+## Troubleshooting
+### Ambari fails to install components
+Ambari is prone to failure during cluster initilization and installation of it's components. A lot of the time this is due to timeouts because of long package downloads or some other long running process. Due to the automatic nature of the setup process, there is not an easy way to restart/continue the install after it fails. The solution is to use the master-

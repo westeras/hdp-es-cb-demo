@@ -19,7 +19,7 @@
     yum: name=libselinux-python state=latest
 
   - name: Install Elasticsearch
-    yum: name=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.1.0.noarch.rpm
+    yum: name=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.4.noarch.rpm
 
   - name: Install Marvel Plugin
     shell: "/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest -verbose"
