@@ -3,32 +3,53 @@
   hosts: all
   sudo: true
   tasks:
+  - name: Install epel repo
+    yum: name=epel-release state=latest
+
+  - name: Install python pip
+    yum: name=python-pip state=latest
+  
+  - name: Install httplib2
+    pip: name=httplib2
+
   - name: Install Latest Java
     yum: name=java state=latest
 
-  - name: Check if Elasticsearch rpm exists
-    stat: path=/vagrant/rpms/elasticsearch-1.4.4.noarch.rpm
-    register: elasticsearch_rpm
+  - name: Install python-selinux
+    yum: name=libselinux-python state=latest
 
-  - name: Create rpms directory
-    file: path=/vagrant/rpms state=directory
-    when: elasticsearch_rpm.stat.exists == false
-
-  - name: Download the rpm
-    get_url: url="https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.4.noarch.rpm" dest=/vagrant/rpms
-    when: elasticsearch_rpm.stat.exists == False
-
-  - name: Install Elasticsearch rpm
-    yum: name=/vagrant/rpms/elasticsearch-1.4.4.noarch.rpm state=present
-
-  - name: Start Elasticsearch
-    service: name=elasticsearch state=started
+  - name: Install Elasticsearch
+    yum: name=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.1.0.noarch.rpm
 
   - name: Install Marvel Plugin
-    shell: "/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest"
+    shell: "/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest -verbose"
+    ignore_errors: true
 
   - name: Install Couchbase Transport Plugin
     shell: "/usr/share/elasticsearch/bin/plugin -install transport-couchbase -url http://packages.couchbase.com.s3.amazonaws.com/releases/elastic-search-adapter/2.0.0/elasticsearch-transport-couchbase-2.0.0.zip"
+    ignore_errors: true
 
-  - name: Configure Couchbase Transport Credentials
-    shell: "echo 'couchbase.password: couchbase' >> /etc/elasticsearch/elasticsearch.yml ; echo 'couchbase.username: couchbase' >> /etc/elasticsearch/elasticsearch.yml"
+  - name: Set Elasticsearch Couchbase configurations
+    lineinfile: dest=/etc/elasticsearch/elasticsearch.yml line="{{ item }}" insertafter=EOF state=present
+    with_items:
+    - "couchbase.username: couchbase"
+    - "couchbase.password: couchbase"
+    - "network.publish_host: 192.168.56.42"
+
+  - name: Start Elasticsearch
+    service: name=elasticsearch state=started
+    
+  - wait_for: port=9200 delay=5
+
+#  - name: Fetch Couchbase Index Template
+#    fetch: src=/usr/share/elasticsearch/plugins/transport-couchbase/couchbase_template.json dest="deps/couchbase_template.json" flat=yes
+
+  - name: Upload Couchbase Index template
+#    uri: url="http://elasticsearch.demo:9200/_template/couchbase" method=PUT body="{{ lookup('file','deps/couchbase_template.json') }}"
+    shell: "curl -XPUT http://127.0.0.1:9200/_template/couchbase -d @/usr/share/elasticsearch/plugins/transport-couchbase/couchbase_template.json"
+
+  - name: Create the Couchbase index
+    uri: url="http://elasticsearch.demo:9200/demo" method=PUT
+
+  - name: Restart Elasticsearch
+    service: name=elasticsearch state=restarted
