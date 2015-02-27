@@ -67,6 +67,7 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
 2. after HDP has fully installed, run the following to create a new Kafka topic:
 
    ```sh
+   cd /usr/hdp/current/kafka-broker/
    bin/kafka-topics.sh --create --zookeeper hdp.demo:2181 --replication-factor 1 --partitions 1 --topic twitter
    ```
 
