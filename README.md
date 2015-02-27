@@ -72,9 +72,10 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
 
 ### To run topology
 
-1. cd into hdp-es-cb-demo, run Maven build command:
+1. Build project using Maven:
 
    ```sh
+   cd hdp-es-cb-demo/
    mvn clean package
    ```
 
