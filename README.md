@@ -64,7 +64,7 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
 ### Setup
 
 1. add a twitter4j.properties to src/main/resources with consumer and api keys and secrets (see https://dev.twitter.com/ for help)
-2. after HDP has fully installed, run the following to create a new Kafka topic:
+2. after HDP has fully installed, run the following to create a new Kafka topic (NOTE: ssh into the hdp node with 'vagrant ssh hdp.demo' first):
 
    ```sh
    cd /usr/hdp/current/kafka-broker/
