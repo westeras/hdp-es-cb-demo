@@ -72,7 +72,12 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
 
 ### To run topology
 
-1. cd into hdp-es-cb-demo, run 'mvn clean package'
+1. cd into hdp-es-cb-demo, run Maven build command:
+
+   ```sh
+   mvn clean package
+   ```
+
 2. Copy target jar into shared vagrant folder:
 
    ```sh
