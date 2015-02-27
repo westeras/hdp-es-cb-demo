@@ -10,19 +10,36 @@
     yum: name=openssl098e state=latest
 
   - name: Check if Couchbase rpm exists
-    stat: path=/vagrant/rpms/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm
-    register: couchbase_rpm
+    stat: path=/vagrant/deps/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm
+    register: cb_rpm
 
-  - name: Create rpms directory
-    file: path=/vagrant/rpms state=directory
-    when: couchbase_rpm.stat.exists == false
+  - name: Create deps directory
+    file: path=/vagrant/deps state=directory
+    when: cb_rpm.stat.exists == false
 
-  - name: Download the rpm
-    get_url: url="http://packages.couchbase.com/releases/3.0.2/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm" dest=/vagrant/rpms
-    when: couchbase_rpm.stat.exists == False
+  - name: Download Couchbase rpm
+    get_url: url=http://packages.couchbase.com/releases/3.0.2/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm dest=/vagrant/deps/
+    when: cb_rpm.stat.exists == false
 
-  - name: Install Couchbase rpm
-    yum: name=/vagrant/rpms/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm state=present
+  - name: Install Couchbase
+    yum: name=/vagrant/deps/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm
+
+  - wait_for: port=8091 delay=5
 
   - name: Initialize Couchbase cluster
-    shell: "sleep 15; /opt/couchbase/bin/couchbase-cli cluster-init -c 127.0.0.1:8091 --cluster-init-username=couchbase --cluster-init-password=couchbase --cluster-init-port=8091 --cluster-init-ramsize=796"
+    shell: "/opt/couchbase/bin/couchbase-cli cluster-init -c 127.0.0.1:8091 --cluster-init-username=couchbase --cluster-init-password=couchbase --cluster-init-port=8091 --cluster-init-ramsize=796"
+
+  - wait_for: port=8091 delay=3
+
+  - name: Create demo bucket
+    shell: "/opt/couchbase/bin/couchbase-cli bucket-create -c 127.0.0.1:8091 --bucket=demo --bucket-type=couchbase --bucket-port=11211 --bucket-ramsize=796  --bucket-replica=0 -u couchbase -p couchbase"
+  
+  - wait_for: port=8091 delay=3
+
+  - name: Create XDCR
+    shell: "/opt/couchbase/bin/couchbase-cli xdcr-setup -c 127.0.0.1:8091 --create --xdcr-cluster-name=elasticsearch --xdcr-hostname=elasticsearch.demo:9091 --xdcr-username=couchbase --xdcr-password=couchbase -u couchbase -p couchbase"
+  
+  - wait_for: port=8091 delay=3
+
+  - name: Create Replication
+    shell: "/opt/couchbase/bin/couchbase-cli xdcr-replicate -c 127.0.0.1:8091 --create --xdcr-cluster-name=elasticsearch --xdcr-from-bucket=demo --xdcr-to-bucket=demo --xdcr-replication-mode=capi -u couchbase -p couchbase"
