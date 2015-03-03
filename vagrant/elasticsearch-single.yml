@@ -53,3 +53,12 @@
 
   - name: Restart Elasticsearch
     service: name=elasticsearch state=restarted
+
+  - name: Download Kibana
+    shell: "wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.0-linux-x64.tar.gz -O /tmp/kibana-4.0.0-linux-x64.tar.gz"
+
+  - name: Extract Kibana
+    shell: "tar -zxvf /tmp/kibana-4.0.0-linux-x64.tar.gz -C /usr/share"
+
+  - name: Run Kibana
+    shell: "nohup /usr/share/kibana-4.0.0-linux-x64.tar.gz/bin/kibana"
