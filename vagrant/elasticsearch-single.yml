@@ -60,5 +60,7 @@
   - name: Extract Kibana
     shell: "tar -zxvf /tmp/kibana-4.0.0-linux-x64.tar.gz -C /usr/share"
 
+  - wait_for: port=9200 delay=5
+
   - name: Run Kibana
-    shell: "sudo nohup /usr/share/kibana-4.0.0-linux-x64/bin/kibana"
+    shell: "nohup /usr/share/kibana-4.0.0-linux-x64/bin/kibana"
