@@ -61,4 +61,4 @@
     shell: "tar -zxvf /tmp/kibana-4.0.0-linux-x64.tar.gz -C /usr/share"
 
   - name: Run Kibana
-    shell: "nohup /usr/share/kibana-4.0.0-linux-x64.tar.gz/bin/kibana"
+    shell: "sudo nohup /usr/share/kibana-4.0.0-linux-x64/bin/kibana"
