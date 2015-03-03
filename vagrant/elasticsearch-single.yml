@@ -63,4 +63,4 @@
   - wait_for: port=9200 delay=5
 
   - name: Run Kibana
-    shell: "nohup /usr/share/kibana-4.0.0-linux-x64/bin/kibana"
+    shell: "nohup /usr/share/kibana-4.0.0-linux-x64/bin/kibana > /dev/null 2>&1 &"
