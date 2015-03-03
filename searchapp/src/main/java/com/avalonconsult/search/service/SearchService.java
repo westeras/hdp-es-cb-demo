@@ -43,8 +43,8 @@ public class SearchService {
 			qb = queryString(search);
 		}
 
-		String[] INDEX_NAME = {"articles"};
-		String[] INDEX_TYPE = {"article"};
+		String[] INDEX_NAME = {"demo"};
+		String[] INDEX_TYPE = {"couchbaseDocument"};
 		/* ClusterHealthResponse actionGet = esClient.admin().cluster()
 				 .health(Requests.clusterHealthRequest(INDEX_NAME).waitForYellowStatus().waitForEvents(Priority.LANGUID).waitForRelocatingShards(0)).actionGet();
 */

@@ -13,5 +13,5 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
        http://www.pilato.fr/schema/elasticsearch http://www.pilato.fr/schema/elasticsearch/elasticsearch-0.3.xsd">
     <!-- see java based configuration file -->
-    <elasticsearch:client id="esClient" esNodes="localhost:9300,localhost:9301" />
+    <elasticsearch:client id="esClient" esNodes="elasticsearch.demo:9300" />
 </beans>
