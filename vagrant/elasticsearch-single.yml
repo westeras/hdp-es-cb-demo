@@ -41,12 +41,8 @@
     
   - wait_for: port=9200 delay=5
 
-#  - name: Fetch Couchbase Index Template
-#    fetch: src=/usr/share/elasticsearch/plugins/transport-couchbase/couchbase_template.json dest="deps/couchbase_template.json" flat=yes
-
   - name: Upload Couchbase Index template
-#    uri: url="http://elasticsearch.demo:9200/_template/couchbase" method=PUT body="{{ lookup('file','deps/couchbase_template.json') }}"
-    shell: "curl -XPUT http://127.0.0.1:9200/_template/couchbase -d @/usr/share/elasticsearch/plugins/transport-couchbase/couchbase_template.json"
+    shell: "curl -XPUT http://127.0.0.1:9200/_template/couchbase -d @/vagrant/demo_couchbase_template.json"
 
   - name: Create the Couchbase index
     uri: url="http://elasticsearch.demo:9200/demo" method=PUT
@@ -54,13 +50,13 @@
   - name: Restart Elasticsearch
     service: name=elasticsearch state=restarted
 
+  - wait_for: port=9200 delay=5
+
   - name: Download Kibana
     shell: "wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.0-linux-x64.tar.gz -O /tmp/kibana-4.0.0-linux-x64.tar.gz"
 
   - name: Extract Kibana
     shell: "tar -zxvf /tmp/kibana-4.0.0-linux-x64.tar.gz -C /usr/share"
-
-  - wait_for: port=9200 delay=5
 
   - name: Run Kibana
     shell: "nohup /usr/share/kibana-4.0.0-linux-x64/bin/kibana > /dev/null 2>&1 &"
