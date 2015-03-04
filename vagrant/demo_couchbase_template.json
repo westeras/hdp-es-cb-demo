@@ -21,7 +21,7 @@
         },
         "_default_" : {
             "_source" : {
-                "includes" : ["meta.*"]
+                "includes" : ["*"]
             },
             "properties" : {
                 "meta" : {
