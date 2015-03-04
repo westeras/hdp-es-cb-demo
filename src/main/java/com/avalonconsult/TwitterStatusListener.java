@@ -6,10 +6,7 @@ import kafka.producer.ProducerConfig;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import twitter4j.StallWarning;
-import twitter4j.Status;
-import twitter4j.StatusDeletionNotice;
-import twitter4j.StatusListener;
+import twitter4j.*;
 
 import java.util.Properties;
 
@@ -45,6 +42,22 @@ public class TwitterStatusListener implements StatusListener {
         tweet.put("name", status.getUser().getName());
         tweet.put("location", status.getUser().getLocation());
         tweet.put("text", status.getText());
+
+        HashtagEntity[] hashTags = status.getHashtagEntities();
+        JSONArray jsonHashTags = new JSONArray();
+
+        for (HashtagEntity hashTag : hashTags) {
+            jsonHashTags.put(hashTag.getText());
+        }
+        tweet.put("hashtags", jsonHashTags);
+
+        UserMentionEntity[] mentions = status.getUserMentionEntities();
+        JSONArray jsonMentions = new JSONArray();
+        for (UserMentionEntity mention : mentions) {
+            jsonMentions.put(mention.getScreenName());
+        }
+        tweet.put("mentions", jsonMentions);
+
         if (null != status.getGeoLocation()) {
             tweet.put("latitude", status.getGeoLocation().getLatitude());
             tweet.put("longitude", status.getGeoLocation().getLongitude());
