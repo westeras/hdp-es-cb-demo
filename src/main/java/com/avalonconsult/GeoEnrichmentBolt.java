@@ -53,6 +53,7 @@ public class GeoEnrichmentBolt extends BaseRichBolt {
         String name = (String) jsonObject.get("name");
         String text = (String) jsonObject.get("text");
         String location = (String) jsonObject.get("location");
+        Long datetime = (Long) jsonObject.get("datetime");
 
         Object latObject = jsonObject.get("latitude");
         Object lonObject = jsonObject.get("longitude");
@@ -62,6 +63,7 @@ public class GeoEnrichmentBolt extends BaseRichBolt {
         tweet.put("user", user);
         tweet.put("name", name);
         tweet.put("text", text);
+        tweet.put("datetime", datetime);
 
         if (null != latObject && null != lonObject) {
             double latitude = (Double) latObject;
