@@ -59,6 +59,8 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
    vagrant up
    ```
    
+After the last machine has been provisioned, you should be able to open http://hdp.demo:8080, log into Ambari with admin:admin and see that components are being installed (note the installation of HDP will take quite a while and requires a solid internet connection).
+   
 ## Running the demo
 
 ### Setup
