@@ -16,8 +16,11 @@
   - name: Install httplib2
     pip: name=httplib2
 
+  - name: Download Elasticsearch RPM
+    get_url: url=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.4.noarch.rpm dest=/vagrant/deps/elasticsearch-1.4.4.noarch.rpm
+
   - name: Install Elasticsearch
-    yum: name=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.4.noarch.rpm
+    yum: name=/vagrant/deps/elasticsearch-1.4.4.noarch.rpm
 
   - name: Install Marvel Plugin
     command: "/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest --timeout 30s"
@@ -56,12 +59,12 @@
   - name: Download Kibana
     get_url:
       url="https://download.elasticsearch.org/kibana/kibana/kibana-4.0.0-linux-x64.tar.gz"
-      dest="/tmp/"
+      dest="/vagrant/deps/kibana-4.0.0-linux-x64.tar.gz"
     register: new_archive
 
   - name: Unarchive Kibana
     unarchive:
-      src="/tmp/kibana-4.0.0-linux-x64.tar.gz"
+      src="/vagrant/deps/kibana-4.0.0-linux-x64.tar.gz"
       dest="/usr/share"
       copy=no
     when: new_archive|changed
