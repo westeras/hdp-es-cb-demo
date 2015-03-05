@@ -123,6 +123,24 @@ vagrant ssh couchbase.demo
 
 The sample data set in hdp-es-cb-demo/vagrant/sample\_data contains roughly a thousand tweets dumped from a Couchbase instance to a CSV file, cb\_out.csv
 
+## Resetting Couchbase and Elasticsearch
+It is nice to not have to rebuild the environment from scratch just to reset the data in Couchbase and Elasticsearch.
+
+### Couchbase
+Deletes the data bucket, removes the replication endpoint, recreates the data bucket, recreates the replication endpoint, recreates and starts the replication.
+
+```bash
+vagrant ssh couchbase.demo
+/vagrant/reset_couchbase.sh
+```
+
+### Elasticsearch
+Deletes the index and recreates it.
+
+```bash
+vagrant ssh elasticsearch.demo
+/vagrant/reset_elasticsearch.sh
+```
 
 ## Troubleshooting
 ### Ambari fails to install components
