@@ -58,5 +58,8 @@
   - name: Extract Kibana
     shell: "tar -zxvf /tmp/kibana-4.0.0-linux-x64.tar.gz -C /usr/share"
 
-  - name: Run Kibana
-    shell: "nohup /usr/share/kibana-4.0.0-linux-x64/bin/kibana > /dev/null 2>&1 &"
+  - name: Copy Kibana init script
+    copy: src=kibana4 dest=/etc/init.d/kibana4 owner=root group=root mode=755
+
+  - name: Start Kibana
+    service: name=kibana4 state=started enabled=yes
