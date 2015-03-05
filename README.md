@@ -59,6 +59,8 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
    vagrant up
    ```
    
+After the last machine has been provisioned, you should be able to open http://hdp.demo:8080, log into Ambari with admin:admin and see that components are being installed (note the installation of HDP will take quite a while and requires a solid internet connection).
+   
 ## Running the demo
 
 ### Setup
@@ -76,19 +78,22 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
 1. Build project using Maven:
 
    ```sh
+   # on your local machine
    cd hdp-es-cb-demo/
    mvn clean package
    ```
 
-2. Copy target jar into shared vagrant folder:
+2. Copy target jar into shared vagrant folder (the vagrant folder is a shared folder between your local machine and the VM):
 
    ```sh
+   # on your local machine
    cp target/storm-search-demo-1.0-SNAPSHOT.jar vagrant/
    ```
 
 2. Run Twitter producer:
 
    ```sh
+   # on hdp.demo (use 'vagrant ssh hdp.demo')
    java -cp /vagrant/storm-search-demo-1.0-SNAPSHOT.jar com.avalonconsult.TwitterProducer <query terms>
    ```
    Note: choose query terms that won't return a massive influx of tweets and overwhelm your vm
@@ -96,6 +101,7 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
 3. In a different terminal window, run the Storm topology:
 
    ```sh
+   # also on hdp.demo
    storm jar /vagrant/storm-search-demo-1.0-SNAPSHOT.jar com.avalonconsult.TwitterIngestTopology
    ```
 
