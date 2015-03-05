@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Check if Elasticsearch is up
+STATUS=$(curl -sL -w "%{http_code}" "http://127.0.0.1:9200/" -o /dev/null)
+if [ $STATUS -ne 200 ]
+then
+  echo
+  echo "Elasticsearch is not available"
+  exit 100
+fi
+
+PID_FILE=$1
+LOG_FILE=$2
+
+/usr/share/kibana-4.0.0-linux-x64/bin/kibana 2&>1 >> $LOG_FILE &
+echo $! > $PID_FILE

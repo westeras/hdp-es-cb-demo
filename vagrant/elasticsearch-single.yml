@@ -4,37 +4,37 @@
   sudo: true
   tasks:
   - name: Install epel repo
-    yum: name=epel-release state=latest
+    yum: name=epel-release state=present
 
-  - name: Install python pip
-    yum: name=python-pip state=latest
-  
+  - name: Install packages
+    yum: name={{item}} state=present
+    with_items:
+      - java
+      - python-pip
+      - libselinux-python
+
   - name: Install httplib2
     pip: name=httplib2
-
-  - name: Install Latest Java
-    yum: name=java state=latest
-
-  - name: Install python-selinux
-    yum: name=libselinux-python state=latest
 
   - name: Install Elasticsearch
     yum: name=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.4.noarch.rpm
 
   - name: Install Marvel Plugin
-    shell: "/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest -verbose"
-    ignore_errors: true
+    command: "/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest --timeout 30s"
+    args:
+      creates: "/usr/share/elasticsearch/plugins/marvel"
 
   - name: Install Couchbase Transport Plugin
-    shell: "/usr/share/elasticsearch/bin/plugin -install transport-couchbase -url http://packages.couchbase.com.s3.amazonaws.com/releases/elastic-search-adapter/2.0.0/elasticsearch-transport-couchbase-2.0.0.zip"
-    ignore_errors: true
+    command: "/usr/share/elasticsearch/bin/plugin -i transport-couchbase --url http://packages.couchbase.com.s3.amazonaws.com/releases/elastic-search-adapter/2.0.0/elasticsearch-transport-couchbase-2.0.0.zip --timeout 30s"
+    args:
+      creates: "/usr/share/elasticsearch/plugins/transport-couchbase"
 
   - name: Set Elasticsearch Couchbase configurations
     lineinfile: dest=/etc/elasticsearch/elasticsearch.yml line="{{ item }}" insertafter=EOF state=present
     with_items:
     - "couchbase.username: couchbase"
     - "couchbase.password: couchbase"
-    - "network.publish_host: 192.168.56.42"
+    - "network.publish_host: {{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }}"
 
   - name: Start Elasticsearch
     service: name=elasticsearch state=started enabled=yes
@@ -42,21 +42,32 @@
   - wait_for: port=9200 delay=5
 
   - name: Upload Couchbase Index template
-    shell: "curl -XPUT http://127.0.0.1:9200/_template/couchbase -d @/vagrant/demo_couchbase_template.json"
+    uri: url=http://127.0.0.1:9200/_template/couchbase method=PUT body='{{ lookup("file", "demo_couchbase_template.json") }}' status_code=200
+
+  - name: Check Couchbase index exists
+    uri: url="http://elasticsearch.demo:9200/demo" method=HEAD
+    ignore_errors: True
+    register: index_exists
 
   - name: Create the Couchbase index
     uri: url="http://elasticsearch.demo:9200/demo" method=PUT
-
-  - name: Restart Elasticsearch
-    service: name=elasticsearch state=restarted enabled=yes
-
-  - wait_for: port=9200 delay=5
+    when: index_exists|failed
 
   - name: Download Kibana
-    shell: "wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.0-linux-x64.tar.gz -O /tmp/kibana-4.0.0-linux-x64.tar.gz"
+    get_url:
+      url="https://download.elasticsearch.org/kibana/kibana/kibana-4.0.0-linux-x64.tar.gz"
+      dest="/tmp/"
+    register: new_archive
 
-  - name: Extract Kibana
-    shell: "tar -zxvf /tmp/kibana-4.0.0-linux-x64.tar.gz -C /usr/share"
+  - name: Unarchive Kibana
+    unarchive:
+      src="/tmp/kibana-4.0.0-linux-x64.tar.gz"
+      dest="/usr/share"
+      copy=no
+    when: new_archive|changed
+
+  - name: Copy Kibana daemon script
+    copy: src=kibanad dest=/usr/share/kibana-4.0.0-linux-x64/bin/kibanad owner=root group=root mode=755
 
   - name: Copy Kibana init script
     copy: src=kibana4 dest=/etc/init.d/kibana4 owner=root group=root mode=755
