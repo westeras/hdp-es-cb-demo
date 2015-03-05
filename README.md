@@ -123,6 +123,12 @@ vagrant ssh couchbase.demo
 
 The sample dataset in hdp-es-cb-demo/vagrant/sample\_data/cb_backup contains roughly a thousand tweets dumped from a Couchbase instance that were ingested/processed using Storm.
 
+Also, for those interested, this is what you would run if you wanted to back up your own Couchbase instance:
+```sh
+/opt/couchbase/bin/cbbackup http://localhost:8091 /home/vagrant/cb_backup -u couchbase -p couchbase -b demo
+```
+This command creates a backup of the demo bucket under /home/vagrant/cb_backup
+
 ## Resetting Couchbase and Elasticsearch
 It is nice to not have to rebuild the environment from scratch just to reset the data in Couchbase and Elasticsearch.
 
