@@ -17,7 +17,7 @@ KIBANA_BIN=/usr/share/kibana-4.0.0-linux-x64/bin
 
 PID_FILE=/var/run/kibana.pid
 LOG_FILE=/var/log/kibana.log
-exec=$KIBANA_BIN/kibana
+exec=$KIBANA_BIN/kibanad
 RETVAL=0
 prog="kibana"
 lockfile=/var/lock/subsys/$prog
@@ -34,8 +34,7 @@ start() {
     fi
     [ -x $exec ] || exit 5
     echo -n $"Starting $prog: "
-    $exec 2&>1 >> $LOG_FILE &
-    echo $! > $PID_FILE
+    daemon --pidfile $PID_FILE $exec $PID_FILE $LOG_FILE
     retval=$?
     echo
     [ $retval -eq 0 ] && touch $lockfile
@@ -47,13 +46,7 @@ stop() {
         exit 4
     fi
     echo -n $"Stopping $prog: "
-	if [ -f $PID_FILE ]; then
-		kill $(cat $PID_FILE)
-                rm $PID_FILE
-		RETVAL=3
-	else
-		failure $"Stopping $prog"
-	fi
+    killproc -p $PID_FILE $exec
     retval=$?
     echo
     [ $retval -eq 0 ] && rm -f $lockfile
