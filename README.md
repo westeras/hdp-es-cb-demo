@@ -112,10 +112,7 @@ At this point, you should be able to see things happening in the Storm UI (http:
 It is possible to bypass the Hadoop portion of the demo and load some sample data directly into Couchbase.  Note that a bulk import into Couchbase will still be mirrored over to Elasticsearch, so the data will be in both places.  Here are the steps to setup a clean Couchbase/Elasticsearch environment with no HDP node and sample data imported:
 
 ```sh
-# clean the vagrant environment
-vagrant destroy
-
-# bring up couchbase and elasticsearch nodes
+# bring up couchbase and elasticsearch nodes (if not up already)
 vagrant up elasticsearch.demo
 vagrant up couchbase.demo
 
