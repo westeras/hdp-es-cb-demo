@@ -118,7 +118,7 @@ vagrant up couchbase.demo
 
 # when couchbase.demo finishes loading
 vagrant ssh couchbase.demo
-/opt/couchbase/bin/cbtransfer /vagrant/sample_data/cb_out.csv http://localhost:8091 -B demo -u couchbase -p couchbase
+/opt/couchbase/bin/cbrestore /vagrant/sample_data/cb_backup/ http://localhost:8091 --bucket-source=demo --bucket-destination=demo
 ```
 
 The sample data set in hdp-es-cb-demo/vagrant/sample\_data contains roughly a thousand tweets dumped from a Couchbase instance to a CSV file, cb\_out.csv
