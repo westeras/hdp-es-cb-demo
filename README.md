@@ -107,6 +107,26 @@ After the last machine has been provisioned, you should be able to open http://h
 
 At this point, you should be able to see things happening in the Storm UI (http://hdp.demo:8744/).  Click on twitter-ingest-topology to see statistics and throughput.  Visit the Couchbase UI to see documents as they are inserted into the document store (http://couchbase.demo:8091/, couchbase:couchbase for user:pass).  Finally, you can query the Elasticsearch instance and view documents (http://elasticsearch.demo:9200/demo/couchbaseDocument/_search?pretty&q=*)
 
+## If you don't want to work with the Hadoop part
+
+It is possible to bypass the Hadoop portion of the demo and load some sample data directly into Couchbase.  Note that a bulk import into Couchbase will still be mirrored over to Elasticsearch, so the data will be in both places.  Here are the steps to setup a clean Couchbase/Elasticsearch environment with no HDP node and sample data imported:
+
+```sh
+# clean the vagrant environment
+vagrant destroy
+
+# bring up couchbase and elasticsearch nodes
+vagrant up elasticsearch.demo
+vagrant up couchbase.demo
+
+# when couchbase.demo finishes loading
+vagrant ssh couchbase.demo
+/opt/couchbase/bin/cbtransfer /vagrant/sample_data/cb_out.csv http://localhost:8091 -B demo -u couchbase -p couchbase
+```
+
+The sample data set in hdp-es-cb-demo/vagrant/sample\_data contains roughly a thousand tweets dumped from a Couchbase instance to a CSV file, cb\_out.csv
+
+
 ## Troubleshooting
 ### Ambari fails to install components
 Ambari is prone to failure during cluster initilization and installation of it's components. A lot of the time this is due to timeouts because of long package downloads or some other long running process. Due to the automatic nature of the setup process, there is not an easy way to restart/continue the install after it fails. The solution is to use the master-
