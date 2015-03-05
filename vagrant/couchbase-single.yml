@@ -22,10 +22,8 @@
 
   - name: Start couchbase-server
     service: name=couchbase-server state=started enabled=yes
-    register: start_couchbase
 
   - wait_for: port=8091 delay=5
-    when: start_couchbase|changed
 
   - name: Initialize Couchbase cluster
     command: "/opt/couchbase/bin/couchbase-cli cluster-init -c 127.0.0.1:8091 --cluster-init-username=couchbase --cluster-init-password=couchbase --cluster-init-port=8091 --cluster-init-ramsize=796 -u couchbase -p couchbase" 
