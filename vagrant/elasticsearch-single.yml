@@ -34,7 +34,7 @@
     with_items:
     - "couchbase.username: couchbase"
     - "couchbase.password: couchbase"
-    - "network.publish_host: 192.168.56.42"
+    - "network.publish_host: {{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }}"
 
   - name: Start Elasticsearch
     service: name=elasticsearch state=started enabled=yes
