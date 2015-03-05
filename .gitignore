@@ -23,3 +23,5 @@ twitter4j.properties
 .classpath/
 .settings/
 .project/
+
+.DS_Store
