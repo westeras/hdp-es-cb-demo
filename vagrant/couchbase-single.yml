@@ -10,7 +10,7 @@
     yum: name=epel-release state=present
 
   - name: Make sure OpenSSL is up to date
-    yum: name=openssl state=latest update_cache=yes
+    yum: name=openssl state=latest
 
   - name: Install packages
     yum: name={{item}} state=present
