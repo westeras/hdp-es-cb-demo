@@ -18,14 +18,50 @@
     yum: name=openssl state=latest
 
   - name: Install Python requests module
-    pip: name=requests
+    pip: name={{item}}
+    with_items:
+      - httplib2
+      - libselinux-python
+      - requests
 
-  - name: Run configuration script
-    script: init_hdp.sh
+  - selinux: state=disabled
+
+  - name: Disable SELinux
+    command: setenforce 0
+
+  - service: name=iptables state=stopped enabled=no
+
+  - service: name=ntpd state=started enabled=yes
+
+  - sysctl: name=vm.swappiness value=1 state=present
+
+# Disable THP
+#echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
+#echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
+#echo "echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag" >> /etc/rc.local
+#echo "echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled" >> /etc/rc.local
+ 
+# Enable more open files
+#echo "* - nofile 65536" >> /etc/security/limits.conf
+
+  # Generate ssh key for vagrant user
+  - user: name=vagrant generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
+
+  - name: Download ambari.repo
+    get_url: url=http://public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.7.0/ambari.repo dest=/etc/yum.repos.d/ambari.repo mode=0644
+
+  - name: Install Ambari Server
+    yum: name=ambari-server state=present
+
+  - name: Setup ambari-server
+    command: ambari-server setup -s
 
   - name: Ensure Ambari server running
-    service: name=ambari-server state=started
+    service: name=ambari-server state=started enabled=yes
 
-  - name: Run Ambari host registration script
-    sudo: no
-    script: blueprint.py
+  - name: Wait for Ambari Server to come up
+    wait_for: host=127.0.0.1 port=8080
+
+#  - name: Run Ambari host registration script
+#    sudo: no
+#    command: blueprint.py
