@@ -71,11 +71,17 @@
     register: installed_ambari_server
 
   - name: Download Java for Ambari
-    get_url: url={{item}} dest=/var/lib/ambari-server/resources/
+    get_url: url=http://public-repo-1.hortonworks.com/ARTIFACTS/{{item}} dest=/vagrant/deps/{{item}}
     with_items:
-      - http://public-repo-1.hortonworks.com/ARTIFACTS/jdk-7u67-linux-x64.tar.gz
-      - http://public-repo-1.hortonworks.com/ARTIFACTS/UnlimitedJCEPolicyJDK7.zip
+      - jdk-7u67-linux-x64.tar.gz
+      - UnlimitedJCEPolicyJDK7.zip
     when: installed_ambari_server|changed
+
+  - name: Copy Java to Ambari resources
+    command: cp /vagrant/deps/{{item}} /var/lib/ambari-server/resources/{{item}} creates=/var/lib/ambari-server/resources/{{item}}
+    with_items:
+      - jdk-7u67-linux-x64.tar.gz
+      - UnlimitedJCEPolicyJDK7.zip
 
   - name: Setup ambari-server
     shell: ambari-server setup -s
