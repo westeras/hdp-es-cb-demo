@@ -16,7 +16,7 @@
       - libselinux-python
 
   - name: Update OpenSSL
-    yum: name=openssl state=latest
+    yum: name=openssl state=latest update_cache=yes
 
   - name: Install Python requests module
     pip: name={{item}}
@@ -33,7 +33,7 @@
 
   - service: name=ntpd state=started enabled=yes
 
-  - sysctl: name=vm.swappiness value=1 state=present
+  - sysctl: name=vm.swappiness value=1 state=present ignoreerrors=yes
 
 # Disable THP
 #echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
