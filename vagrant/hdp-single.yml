@@ -13,6 +13,7 @@
       - wget
       - ntp
       - python-pip
+      - libselinux-python
 
   - name: Update OpenSSL
     yum: name=openssl state=latest
@@ -21,7 +22,6 @@
     pip: name={{item}}
     with_items:
       - httplib2
-      - libselinux-python
       - requests
 
   - selinux: state=disabled
