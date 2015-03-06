@@ -152,6 +152,8 @@ vagrant ssh elasticsearch.demo
 The script hdp-es-cb-demo/vagrant/create_table.q will place an external Hive table (called tweets) over the HDFS directory /tmp/tweets.  All you need to do is run the script.  The table will be created regardless of whether or not any data exists in the directory.
 ```sh
 vagrant ssh hdp.demo
+
+# Run the script to create the Hive table
 hive -f /vagrant/create_table.q
 
 # Open the Hive CLI and start querying the table
