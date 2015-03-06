@@ -12,5 +12,5 @@ fi
 PID_FILE=$1
 LOG_FILE=$2
 
-/usr/share/kibana-4.0.0-linux-x64/bin/kibana 2&>1 >> $LOG_FILE &
+/usr/share/kibana/bin/kibana 2&>1 >> $LOG_FILE &
 echo $! > $PID_FILE

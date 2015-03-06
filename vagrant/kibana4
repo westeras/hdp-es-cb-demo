@@ -13,7 +13,7 @@
 ### END INIT INFO
 
 #configure this with wherever you unpacked kibana:
-KIBANA_BIN=/usr/share/kibana-4.0.0-linux-x64/bin
+KIBANA_BIN=/usr/share/kibana/bin
 
 PID_FILE=/var/run/kibana.pid
 LOG_FILE=/var/log/kibana.log
