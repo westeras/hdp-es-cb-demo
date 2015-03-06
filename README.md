@@ -129,6 +129,26 @@ Also, for those interested, this is what you would run if you wanted to back up 
 ```
 This command creates a backup of the demo bucket under /home/vagrant/cb_backup
 
+## Running Kibana
+Kibana should be started after provisioning the Elasticsearch node.  However, if for some reason Kibana isn't started, Elasticsearch must be running in order for Kibana to successfully start.  If you are having issues getting Kibana to run, you can either reprovision with:
+```sh
+# from hdp-es-cb-demo/vagrant/ on host machine
+vagrant provision elasticsearch.demo
+```
+Otherwise, try the following steps to get Kibana running:
+```sh
+vagrant ssh elasticsearch.demo
+sudo service elasticsearch status
+
+# If elasticsearch is running, you can start Kibana
+sudo service kibana4 start
+
+# Otherwise, start Elasticsearch, wait, then start Kibana
+sudo service elasticsearch start
+# wait until elasticsearch is up
+sudo service kibana4 start
+```
+
 ## Resetting Couchbase and Elasticsearch
 It is nice to not have to rebuild the environment from scratch just to reset the data in Couchbase and Elasticsearch.
 
