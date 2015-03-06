@@ -102,9 +102,9 @@
     sudo: no
     command: python /vagrant/add_cluster_blueprint.py
 
-  # Wait for up to 30 min for the cluster to come up
+  # Wait for up to 45 min for the cluster to come up
   - name: Install cluster via Ambari blueprint
     sudo: no
     command: python /vagrant/install_cluster.py
-    async: 1800
+    async: 2700
     poll: 10
