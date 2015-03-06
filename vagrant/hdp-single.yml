@@ -54,7 +54,7 @@
     yum: name=ambari-server state=present
 
   - name: Setup ambari-server
-    command: ambari-server setup -s
+    shell: ambari-server setup -s
 
   - name: Ensure Ambari server running
     service: name=ambari-server state=started enabled=yes
