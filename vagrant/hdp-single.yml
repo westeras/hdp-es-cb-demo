@@ -3,37 +3,97 @@
   hosts: all
   sudo: true
   tasks:
-  - name: Install latest Java
-    yum: name=java state=latest
-
-  - name: Install latest wget
-    yum: name=wget state=latest
-
-  - name: Install ntp daemon
-    yum: name=ntp state=latest
-
-  - name: Update OpenSSL
-    yum: name=openssl state=latest
-
-  - name: Run configuration script
-    script: init_hdp.sh
-
   - name: Install epel repo
-    yum: name=epel-release state=latest
+    yum: name=epel-release state=present
 
-  - name: Install python pip
-    yum: name=python-pip state=latest
+  - name: Install packages
+    yum: name={{item}} state=present
+    with_items:
+      - java
+      - openssl-1.0.1e
+      - wget
+      - ntp
+      - python-pip
+      - libselinux-python
 
   - name: Install Python requests module
-    pip: name=requests
+    pip: name={{item}}
+    with_items:
+      - httplib2
+      - requests
 
-  - name: Install vim
-    yum: name=vim state=latest
+  - selinux: state=disabled
+
+  - name: Disable SELinux
+    command: setenforce 0
+
+  - service: name=iptables state=stopped enabled=no
+
+  - service: name=ntpd state=started enabled=yes
+
+  - sysctl: name=vm.swappiness value=1 state=present ignoreerrors=yes
+
+  - name: Disable THP (1)
+    command: echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
+
+  - name: Disable THP (2)
+    command: echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
+
+  - name: Disable THP (3)
+    lineinfile: dest=/etc/rc.local
+                line='echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag'
+                state=present
+
+  - name: Disable THP (4)
+    lineinfile: dest=/etc/rc.local
+                line='echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled'
+                state=present
+
+  - name: Update /etc/security/limits.conf
+    lineinfile: dest=/etc/security/limits.conf
+                insertbefore='# End of file'
+                line='* - nofile 65536'
+                state=present
+
+  - user: name=vagrant generate_ssh_key=yes
+
+  - name: Copy public key
+    command: cat /home/vagrant/.ssh/id_rsa.pub
+    register: id_rsa_pub
+
+  - authorized_key: user=vagrant key='{{ id_rsa_pub.stdout }}'
+
+  - name: Download ambari.repo
+    get_url: url=http://public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.7.0/ambari.repo dest=/etc/yum.repos.d/ambari.repo mode=0644
+
+  - name: Install Ambari Server
+    yum: name=ambari-server state=present
+    register: installed_ambari_server
+
+  - name: Download Java for Ambari
+    get_url: url={{item}} dest=/vagrant/deps/
+    with_items:
+      - http://public-repo-1.hortonworks.com/ARTIFACTS/jdk-7u67-linux-x64.tar.gz
+      - http://public-repo-1.hortonworks.com/ARTIFACTS/UnlimitedJCEPolicyJDK7.zip
+    when: installed_ambari_server|changed
+
+  - copy: src={{item}} dest=/var/lib/ambari-server/resources/ owner=root group=root mode=0644
+    with_items:
+      - /vagrant/deps/jdk-7u67-linux-x64.tar.gz
+      - /vagrant/deps/UnlimitedJCEPolicyJDK7.zip
+    when: installed_ambari_server|changed
+
+  - name: Setup ambari-server
+    shell: ambari-server setup -s
+    when: installed_ambari_server|changed
 
   - name: Ensure Ambari server running
-    service: name=ambari-server state=restarted
-    register: ambari_start
+    service: name=ambari-server state=restarted enabled=yes
+    when: installed_ambari_server|changed
+
+  - wait_for: port=8080 delay=3
+    when: installed_ambari_server|changed
 
   - name: Run Ambari host registration script
     sudo: no
-    script: blueprint.py
+    command: python /vagrant/blueprint.py
