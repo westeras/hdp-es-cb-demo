@@ -35,12 +35,22 @@
 
   - sysctl: name=vm.swappiness value=1 state=present ignoreerrors=yes
 
-# Disable THP
-#echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
-#echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
-#echo "echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag" >> /etc/rc.local
-#echo "echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled" >> /etc/rc.local
- 
+  - name: Disable THP (1)
+    command: echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
+
+  - name: Disable THP (2)
+    command: echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
+
+  - name: Disable THP (3)
+    lineinfile: dest=/etc/rc.local
+                line='echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag'
+                state=present
+
+  - name: Disable THP (4)
+    lineinfile: dest=/etc/rc.local
+                line='echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled'
+                state=present
+
   - name: Update /etc/security/limits.conf
     lineinfile: dest=/etc/security/limits.conf
                 insertbefore='# End of file'
@@ -80,6 +90,6 @@
   - wait_for: port=8080 delay=3
     when: installed_ambari_server|changed
 
-#  - name: Run Ambari host registration script
-#    sudo: no
-#    command: blueprint.py
+  - name: Run Ambari host registration script
+    sudo: no
+    command: python /vagrant/blueprint.py
