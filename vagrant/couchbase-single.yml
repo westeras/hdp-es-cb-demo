@@ -9,12 +9,10 @@
   - name: Install epel repo
     yum: name=epel-release state=present
 
-  - name: Make sure OpenSSL is up to date
-    yum: name=openssl state=latest
-
   - name: Install packages
     yum: name={{item}} state=present
     with_items:
+      - openssl-1.0.1e
       - python-pip
       - pkgconfig
       - /vagrant/deps/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm
