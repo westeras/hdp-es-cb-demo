@@ -148,6 +148,19 @@ vagrant ssh elasticsearch.demo
 /vagrant/reset_elasticsearch.sh
 ```
 
+## Running Hive Analytics
+The script hdp-es-cb-demo/vagrant/create_table.q will place an external Hive table (called tweets) over the HDFS directory /tmp/tweets.  All you need to do is run the script.  The table will be created regardless of whether or not any data exists in the directory.
+```sh
+vagrant ssh hdp.demo
+hive -f /vagrant/create_table.q
+
+# Open the Hive CLI and start querying the table
+hive
+
+# Select the first 10 items from the tweets table
+SELECT * FROM tweets LIMIT 10;
+```
+
 ## Troubleshooting
 ### Ambari fails to install components
 Ambari is prone to failure during cluster initilization and installation of it's components. A lot of the time this is due to timeouts because of long package downloads or some other long running process. Due to the automatic nature of the setup process, there is not an easy way to restart/continue the install after it fails. The solution is to use the master-
