@@ -94,6 +94,16 @@
   - wait_for: port=8080 delay=3
     when: installed_ambari_server|changed
 
-  - name: Run Ambari host registration script
+  - name: Ambari agent bootstrap 
     sudo: no
-    command: python /vagrant/blueprint.py
+    command: python /vagrant/bootstrap_ambari_agent.py
+
+  - name: Add cluster blueprint to Ambari
+    sudo: no
+    command: python /vagrant/add_cluster_blueprint.py
+
+  - name: Install cluster via Ambari blueprint
+    sudo: no
+    command: python /vagrant/install_cluster.py
+    async: 1200
+    poll: 10
