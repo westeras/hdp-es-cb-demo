@@ -48,9 +48,13 @@
                 state=present
 
   # Generate ssh key for vagrant user
-#  - user: name=vagrant generate_ssh_key=yes
+  - user: name=vagrant generate_ssh_key=yes
 
-#  - authorized_key: user=vagrant key=".ssh/id_rsa.pub"
+  - name: Copy public key
+    command: cat /home/vagrant/.ssh/id_rsa.pub
+    register: id_rsa_pub
+
+  - authorized_key: user=vagrant key=" {{ id_rsa_pub.stdout }}"
 
   - name: Download ambari.repo
     get_url: url=http://public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.7.0/ambari.repo dest=/etc/yum.repos.d/ambari.repo mode=0644
