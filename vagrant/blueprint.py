@@ -85,7 +85,10 @@ if mapping_name not in [cluster['Clusters']['cluster_name'] for cluster in r.jso
         url = r.json()['href']
         while True:
             r = requests.get(url, auth=('admin', 'admin'))
-            if r.json()['Requests']['request_status'] != "COMPLETED":
+            if r.status_code != requests.codes.ok:
+                sys.exit("Error checking cluster install status - " + str(r.status_code) + " - " + r.text)
+            status = r.json()['Requests']['request_status']
+            if r.json()['Requests']['request_status'] == "COMPLETED":
                 print "Cluster installation complete"
                 break
             else:
