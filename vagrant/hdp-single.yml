@@ -10,13 +10,11 @@
     yum: name={{item}} state=present
     with_items:
       - java
+      - openssl-1.0.1e
       - wget
       - ntp
       - python-pip
       - libselinux-python
-
-  - name: Update OpenSSL
-    yum: name=openssl state=latest
 
   - name: Install Python requests module
     pip: name={{item}}
