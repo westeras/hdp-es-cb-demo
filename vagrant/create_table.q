@@ -1,4 +1,6 @@
-ADD JAR /vagrant/json-serde-1.3.1-SNAPSHOT-jar-with-dependencies.jar;
+ADD JAR /vagrant/json-serde-1.3.1.jar;
+
+DROP TABLE IF EXISTS tweets;
 
 CREATE EXTERNAL TABLE IF NOT EXISTS tweets (
 	datetime	BIGINT,
