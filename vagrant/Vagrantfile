@@ -2,9 +2,9 @@
 # # vi: set ft=ruby :
 
 machines = [
-  {:name => "elasticsearch.demo", :ip => "192.168.56.42", :cpus => 4, :memory => 1024, :ansible => "elasticsearch-single.yml"},
-  {:name => "couchbase.demo", :ip => "192.168.56.41", :cpus => 4, :memory => 1024, :ansible => "couchbase-single.yml"},
-  {:name => "hdp.demo", :ip => "192.168.56.43", :cpus => 4, :memory => 4096, :ansible => "hdp-single.yml"}
+  {:name => "elasticsearch.demo", :ip => "192.168.56.42", :memory => 1024, :ansible => "elasticsearch-single.yml"},
+  {:name => "couchbase.demo", :ip => "192.168.56.41", :memory => 1024, :ansible => "couchbase-single.yml"},
+  {:name => "hdp.demo", :ip => "192.168.56.43", :memory => 4096, :ansible => "hdp-single.yml"}
 ]
 
 Vagrant.configure(2) do |config|
@@ -18,15 +18,28 @@ Vagrant.configure(2) do |config|
   end
 
   if Vagrant.has_plugin?("vagrant-cachier")
+    # Configure cached packages to be shared between instances of the same base box.
+    # More info on http://fgrehm.viewdocs.io/vagrant-cachier/usage
     config.cache.scope = :machine
+    config.cache.synced_folder_opts = {
+      type: :nfs,
+      # The nolock option can be useful for an NFSv3 client that wants to avoid the
+      # NLM sideband protocol. Without this option, apt-get might hang if it tries
+      # to lock files needed for /var/cache/* operations. All of this can be avoided
+      # by using NFSv4 everywhere. Please note that the tcp option is not the default.
+      mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
+    }
+    # For more information please check http://docs.vagrantup.com/v2/synced-folders/basic_usage.html
   end
+
+  config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
   machines.each do |machine|
     config.vm.define machine[:name] do |vmconfig|
       vmconfig.vm.box = "chef/centos-6.6"
       vmconfig.vm.provider "virtualbox" do |v|
         v.memory = machine[:memory]
-        v.cpus = machine[:cpus]
+        v.cpus = `#{RbConfig::CONFIG['host_os'] =~ /darwin/ ? 'sysctl -n hw.ncpu' : 'nproc'}`.chomp
       end
 
       vmconfig.vm.hostname = machine[:name]
