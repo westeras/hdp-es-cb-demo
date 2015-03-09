@@ -2,6 +2,13 @@
 - name: Deploy Elasticsearch
   hosts: all
   sudo: true
+  vars:
+  - kibana_version: 4.0.1
+  - kibana_url: https://download.elasticsearch.org/kibana/kibana/kibana-{{ kibana_version }}-linux-x64.tar.gz
+  - cb_transport_plugin_version: 2.0.0
+  - cb_transport_plugin_url: http://packages.couchbase.com.s3.amazonaws.com/releases/elastic-search-adapter/{{ cb_transport_plugin_version }}/elasticsearch-transport-couchbase-{{ cb_transport_plugin_version }}.zip
+  - elasticsearch_version: 1.4.4
+  - elasticsearch_url: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-{{ elasticsearch_version }}.noarch.rpm
   tasks:
   - name: Install epel repo
     yum: name=epel-release state=present
@@ -18,10 +25,10 @@
     pip: name=httplib2
 
   - name: Download Elasticsearch RPM
-    get_url: url=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.4.noarch.rpm dest=/vagrant/deps/elasticsearch-1.4.4.noarch.rpm
+    get_url: url=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-{{ elasticsearch_version }}.noarch.rpm dest=/vagrant/deps/elasticsearch-{{ elasticsearch_version }}.noarch.rpm
 
   - name: Install Elasticsearch
-    yum: name=/vagrant/deps/elasticsearch-1.4.4.noarch.rpm
+    yum: name=/vagrant/deps/elasticsearch-{{ elasticsearch_version }}.noarch.rpm
 
   - name: Install Marvel Plugin
     command: "/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest --timeout 30s"
@@ -29,7 +36,7 @@
       creates: "/usr/share/elasticsearch/plugins/marvel"
 
   - name: Install Couchbase Transport Plugin
-    command: "/usr/share/elasticsearch/bin/plugin -i transport-couchbase --url http://packages.couchbase.com.s3.amazonaws.com/releases/elastic-search-adapter/2.0.0/elasticsearch-transport-couchbase-2.0.0.zip --timeout 30s"
+    command: "/usr/share/elasticsearch/bin/plugin -i transport-couchbase --url {{ cb_transport_plugin_url }} --timeout 30s"
     args:
       creates: "/usr/share/elasticsearch/plugins/transport-couchbase"
 
@@ -59,18 +66,21 @@
 
   - name: Download Kibana
     get_url:
-      url="https://download.elasticsearch.org/kibana/kibana/kibana-4.0.0-linux-x64.tar.gz"
-      dest="/vagrant/deps/kibana-4.0.0-linux-x64.tar.gz"
+      url="https://download.elasticsearch.org/kibana/kibana/kibana-{{ kibana_version }}-linux-x64.tar.gz"
+      dest="/vagrant/deps/kibana-{{ kibana_version }}-linux-x64.tar.gz"
     register: new_archive
 
   - name: Unarchive Kibana
     unarchive:
-      src="/vagrant/deps/kibana-4.0.0-linux-x64.tar.gz"
-      dest="/usr/share"
+      src="/vagrant/deps/kibana-{{ kibana_version }}-linux-x64.tar.gz"
+      dest="/usr/share/"
       copy=no
 
+  - name: Add symlink
+    command: ln -s /usr/share/kibana-{{ kibana_version }}-linux-x64 /usr/share/kibana creates=/usr/share/kibana 
+
   - name: Copy Kibana daemon script
-    copy: src=kibanad dest=/usr/share/kibana-4.0.0-linux-x64/bin/kibanad owner=root group=root mode=755
+    copy: src=kibanad dest=/usr/share/kibana/bin/kibanad owner=root group=root mode=755
 
   - name: Copy Kibana init script
     copy: src=kibana4 dest=/etc/init.d/kibana4 owner=root group=root mode=755
