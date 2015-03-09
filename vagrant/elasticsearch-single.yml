@@ -68,7 +68,6 @@
       src="/vagrant/deps/kibana-4.0.0-linux-x64.tar.gz"
       dest="/usr/share"
       copy=no
-    when: new_archive|changed
 
   - name: Copy Kibana daemon script
     copy: src=kibanad dest=/usr/share/kibana-4.0.0-linux-x64/bin/kibanad owner=root group=root mode=755
