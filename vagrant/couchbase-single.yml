@@ -2,9 +2,13 @@
 - name: Deploy Couchbase
   hosts: all
   sudo: true
+  vars:
+  - couchbase_version: 3.0.2
+  - couchbase_package: couchbase-server-enterprise-{{ couchbase_version }}-centos6.x86_64.rpm
+  - couchbase_url: url=http://packages.couchbase.com/releases/{{ couchbase_version }}/{{ couchbase_package }}
   tasks:
   - name: Download Couchbase RPM
-    get_url: url=http://packages.couchbase.com/releases/3.0.2/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm dest=/vagrant/deps/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm
+    get_url: url={{ couchbase_url }} dest=/vagrant/deps/{{ couchbase_package }}
 
   - name: Install epel repo
     yum: name=epel-release state=present
@@ -15,7 +19,7 @@
       - openssl-1.0.1e
       - python-pip
       - pkgconfig
-      - /vagrant/deps/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm
+      - /vagrant/deps/{{ couchbase_package }}
   
   - name: Install httplib2
     pip: name=httplib2
