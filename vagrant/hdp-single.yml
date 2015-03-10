@@ -68,14 +68,12 @@
 
   - name: Install Ambari Server
     yum: name=ambari-server state=present
-    register: installed_ambari_server
 
   - name: Download Java for Ambari
     get_url: url=http://public-repo-1.hortonworks.com/ARTIFACTS/{{item}} dest=/vagrant/deps/{{item}}
     with_items:
       - jdk-7u67-linux-x64.tar.gz
       - UnlimitedJCEPolicyJDK7.zip
-    when: installed_ambari_server|changed
 
   - name: Copy Java to Ambari resources
     command: cp /vagrant/deps/{{item}} /var/lib/ambari-server/resources/{{item}} creates=/var/lib/ambari-server/resources/{{item}}
@@ -85,14 +83,11 @@
 
   - name: Setup ambari-server
     shell: ambari-server setup -s
-    when: installed_ambari_server|changed
 
   - name: Ensure Ambari server running
     service: name=ambari-server state=restarted enabled=yes
-    when: installed_ambari_server|changed
 
   - wait_for: port=8080 delay=3
-    when: installed_ambari_server|changed
 
   - name: Ambari agent bootstrap 
     sudo: no
