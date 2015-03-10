@@ -43,7 +43,6 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
    ```sh
    vagrant plugin install vagrant-hostmanager
    vagrant plugin install vagrant-cachier
-   vagrant plugin install vagrant-vbguest
    ```
    
 4. Install Ansible
