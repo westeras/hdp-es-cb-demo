@@ -1,6 +1,5 @@
 # Vagrant
 .vagrant
-deps
 
 # Intellij
 .idea/
