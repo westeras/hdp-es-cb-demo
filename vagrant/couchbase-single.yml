@@ -7,9 +7,6 @@
   - couchbase_package: couchbase-server-enterprise-{{ couchbase_version }}-centos6.x86_64.rpm
   - couchbase_url: url=http://packages.couchbase.com/releases/{{ couchbase_version }}/{{ couchbase_package }}
   tasks:
-  - name: Download Couchbase RPM
-    get_url: url={{ couchbase_url }} dest=/vagrant/deps/{{ couchbase_package }}
-
   - name: Install epel repo
     yum: name=epel-release state=present
 
