@@ -19,10 +19,19 @@
       - openssl-1.0.1e
       - python-pip
       - pkgconfig
-      - /vagrant/deps/{{ couchbase_package }}
   
   - name: Install httplib2
-    pip: name=httplib2
+    pip: name={{item}}
+    with_items:
+      - httplib2
+      - urllib2
+      - urlparse
+
+  - name: Download Couchbase RPM
+    get_url: url={{ couchbase_url }} dest=/vagrant/deps/{{ couchbase_package }}
+
+  - name: Install Couchbase Server
+    yum: name=/vagrant/deps/{{ couchbase_package }} state=present
 
   - name: Start couchbase-server
     service: name=couchbase-server state=started enabled=yes
