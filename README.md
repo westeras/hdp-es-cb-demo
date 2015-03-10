@@ -48,6 +48,7 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
 4. Install Ansible
 
    ```sh
+   # For Mac; for Windows see Ansible documentation
    brew install ansible
    ```
 
