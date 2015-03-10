@@ -97,6 +97,10 @@
     sudo: no
     command: python /vagrant/add_cluster_blueprint.py
 
+  - name: Increase Ambari timeout
+    sudo : yes
+    command: sed -i "s/agent.task.timeout=900/agent.task.timeout=2000/" /etc/ambari-server/conf/ambari.properties
+
   # Wait for up to 45 min for the cluster to come up
   - name: Install cluster via Ambari blueprint
     sudo: no
