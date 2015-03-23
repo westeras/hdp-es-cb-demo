@@ -107,6 +107,35 @@ After the last machine has been provisioned, you should be able to open http://h
 
 At this point, you should be able to see things happening in the Storm UI (http://hdp.demo:8744/).  Click on twitter-ingest-topology to see statistics and throughput.  Visit the Couchbase UI to see documents as they are inserted into the document store (http://couchbase.demo:8091/, couchbase:couchbase for user:pass).  Finally, you can query the Elasticsearch instance and view documents (http://elasticsearch.demo:9200/demo/couchbaseDocument/_search?pretty&q=*)
 
+### To Run the Webapp
+
+1. Install Nodejs
+* You can see the download and instructions to install node here: https://nodejs.org/download/
+
+
+2. Install the node-http-server package
+
+   ```sh
+   npm install node-http-server
+   ```
+
+3. Install all dependencies for the web
+
+   ```sh
+   cd elasticsearch-twitter-webapp
+   npm install
+   ```
+
+4. Start the web (while in the elasticsearch-twitter-webapp folder)
+
+   ```sh
+   npm start
+   ```
+
+5. Open the webapp in the browser: go to http://localhost:8000/app/elasticuidemo.html
+*Feel free to modify this webapp as needed.  It uses elasticui (http://www.elasticui.com/).  This app can be more sophisticated and as time permits more work will be added to it.
+*Its an app that find the latest tweets elastic search gets and display them.  They will be displayed in date time order.  The UI refreshes every few seconds.  You can also search and see filters on user names (although the names are currently displayed after analysis).
+
 ## If you don't want to work with the Hadoop part
 
 It is possible to bypass the Hadoop portion of the demo and load some sample data directly into Couchbase.  Note that a bulk import into Couchbase will still be mirrored over to Elasticsearch, so the data will be in both places.  Here are the steps to setup a clean Couchbase/Elasticsearch environment with no HDP node and sample data imported:
