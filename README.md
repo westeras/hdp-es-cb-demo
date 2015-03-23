@@ -101,6 +101,36 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
 
 At this point, you should be able to see things happening in the Storm UI (http://hdp.demo:8744/).  Click on twitter-ingest-topology to see statistics and throughput.  Visit the Couchbase UI to see documents as they are inserted into the document store (http://couchbase.demo:8091/, couchbase:couchbase for user:pass).  Finally, you can query the Elasticsearch instance and view documents (http://elasticsearch.demo:9200/demo/couchbaseDocument/_search?pretty&q=*)
 
+### To Run the Webapp
+
+1. Install Nodejs
+* You can see the download and instructions to install node here: https://nodejs.org/download/
+
+
+2. Install the node-http-server package
+
+   ```sh
+   npm install node-http-server
+   ```
+
+3. Install all dependencies for the web
+
+   ```sh
+   cd elasticsearch-twitter-webapp
+   npm install
+   ```
+
+4. Start the web (while in the elasticsearch-twitter-webapp folder)
+
+   ```sh
+   npm start
+   ```
+
+5. Open the webapp in the browser: go to http://localhost:8000/app/elasticuidemo.html
+*Feel free to modify this webapp as needed.  It uses elasticui (http://www.elasticui.com/).  This app can be more sophisticated and as time permits more work will be added to it.
+*Its an app that find the latest tweets elastic search gets and display them.  They will be displayed in date time order.  The UI refreshes every few seconds.  You can also search and see filters on user names (although the names are currently displayed after analysis).
+
+
 ## Troubleshooting
 ### Ambari fails to install components
 Ambari is prone to failure during cluster initilization and installation of it's components. A lot of the time this is due to timeouts because of long package downloads or some other long running process. Due to the automatic nature of the setup process, there is not an easy way to restart/continue the install after it fails. The solution is to use the master-
