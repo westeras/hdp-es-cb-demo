@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+PID_FILE=$1
+LOG_FILE=$2
+
+/usr/share/kibana/bin/kibana 2&>1 >> $LOG_FILE &
+echo $! > $PID_FILE

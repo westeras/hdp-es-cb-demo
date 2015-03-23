@@ -2,44 +2,62 @@
 - name: Deploy Couchbase
   hosts: all
   sudo: true
+  vars:
+  - couchbase_version: 3.0.2
+  - couchbase_package: couchbase-server-enterprise-{{ couchbase_version }}-centos6.x86_64.rpm
+  - couchbase_url: http://packages.couchbase.com/releases/{{ couchbase_version }}/{{ couchbase_package }}
   tasks:
-  - name: Install pkgconfig
-    yum: name=pkgconfig state=latest
+  - name: Download Couchbase RPM
+    get_url: url={{ couchbase_url }} dest=/vagrant/deps/{{ couchbase_package }}
 
-  - name: Install openssl
-    yum: name=openssl098e state=latest
+  - name: Install epel repo
+    yum: name=epel-release state=present
 
-  - name: Check if Couchbase rpm exists
-    stat: path=/vagrant/deps/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm
-    register: cb_rpm
+  - name: Install packages
+    yum: name={{item}} state=present
+    with_items:
+      - openssl-1.0.1e
+      - python-pip
+      - pkgconfig
+      - /vagrant/deps/{{ couchbase_package }}
+  
+  - name: Install httplib2
+    pip: name=httplib2
 
-  - name: Create deps directory
-    file: path=/vagrant/deps state=directory
-    when: cb_rpm.stat.exists == false
-
-  - name: Download Couchbase rpm
-    get_url: url=http://packages.couchbase.com/releases/3.0.2/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm dest=/vagrant/deps/
-    when: cb_rpm.stat.exists == false
-
-  - name: Install Couchbase
-    yum: name=/vagrant/deps/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm
+  - name: Start couchbase-server
+    service: name=couchbase-server state=started enabled=yes
 
   - wait_for: port=8091 delay=5
 
   - name: Initialize Couchbase cluster
-    shell: "/opt/couchbase/bin/couchbase-cli cluster-init -c 127.0.0.1:8091 --cluster-init-username=couchbase --cluster-init-password=couchbase --cluster-init-port=8091 --cluster-init-ramsize=796"
+    command: "/opt/couchbase/bin/couchbase-cli cluster-init -c 127.0.0.1:8091 --cluster-init-username=couchbase --cluster-init-password=couchbase --cluster-init-port=8091 --cluster-init-ramsize=796 -u couchbase -p couchbase" 
 
   - wait_for: port=8091 delay=3
+
+  - name: Check demo buckets exists
+    uri: url="http://127.0.0.1:8091/pools/default/buckets/demo" method=GET user=couchbase password=couchbase
+    ignore_errors: True
+    register: bucket_exists
 
   - name: Create demo bucket
-    shell: "/opt/couchbase/bin/couchbase-cli bucket-create -c 127.0.0.1:8091 --bucket=demo --bucket-type=couchbase --bucket-port=11211 --bucket-ramsize=796  --bucket-replica=0 -u couchbase -p couchbase"
+    command: "/opt/couchbase/bin/couchbase-cli bucket-create -c 127.0.0.1:8091 --bucket=demo --bucket-type=couchbase --bucket-port=11211 --bucket-ramsize=796 --bucket-replica=0 -u couchbase -p couchbase"
+    when: bucket_exists|failed
   
   - wait_for: port=8091 delay=3
+    when: bucket_exists|failed
 
-  - name: Create XDCR
-    shell: "/opt/couchbase/bin/couchbase-cli xdcr-setup -c 127.0.0.1:8091 --create --xdcr-cluster-name=elasticsearch --xdcr-hostname=elasticsearch.demo:9091 --xdcr-username=couchbase --xdcr-password=couchbase -u couchbase -p couchbase"
+  - name: Create XDCR destination cluster
+    command: "/opt/couchbase/bin/couchbase-cli xdcr-setup -c 127.0.0.1:8091 --create --xdcr-cluster-name=elasticsearch --xdcr-hostname=elasticsearch.demo:9091 --xdcr-username=couchbase --xdcr-password=couchbase -u couchbase -p couchbase"
+    ignore_errors: True
+    register: created_xdcr_dest_cluster
   
   - wait_for: port=8091 delay=3
+    when: created_xdcr_dest_cluster|success
 
-  - name: Create Replication
-    shell: "/opt/couchbase/bin/couchbase-cli xdcr-replicate -c 127.0.0.1:8091 --create --xdcr-cluster-name=elasticsearch --xdcr-from-bucket=demo --xdcr-to-bucket=demo --xdcr-replication-mode=capi -u couchbase -p couchbase"
+  - name: Create replication to Elasticsearch
+    command: "/opt/couchbase/bin/couchbase-cli xdcr-replicate -c 127.0.0.1:8091 --create --xdcr-cluster-name=elasticsearch --xdcr-from-bucket=demo --xdcr-to-bucket=demo --xdcr-replication-mode=capi -u couchbase -p couchbase"
+    ignore_errors: True
+    register: created_xdcr_replication
+
+  - wait_for: port=8091 delay=3
+    when: created_xdcr_replication|success

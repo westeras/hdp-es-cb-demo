@@ -10,6 +10,7 @@ import backtype.storm.tuple.Values;
 import com.google.code.geocoder.Geocoder;
 import com.google.code.geocoder.GeocoderRequestBuilder;
 import com.google.code.geocoder.model.*;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -53,6 +54,9 @@ public class GeoEnrichmentBolt extends BaseRichBolt {
         String name = (String) jsonObject.get("name");
         String text = (String) jsonObject.get("text");
         String location = (String) jsonObject.get("location");
+        Long datetime = (Long) jsonObject.get("datetime");
+        JSONArray hashtags = (JSONArray) jsonObject.get("hashtags");
+        JSONArray mentions = (JSONArray) jsonObject.get("mentions");
 
         Object latObject = jsonObject.get("latitude");
         Object lonObject = jsonObject.get("longitude");
@@ -62,6 +66,9 @@ public class GeoEnrichmentBolt extends BaseRichBolt {
         tweet.put("user", user);
         tweet.put("name", name);
         tweet.put("text", text);
+        tweet.put("datetime", datetime);
+        tweet.put("hashtags", hashtags);
+        tweet.put("mentions", mentions);
 
         if (null != latObject && null != lonObject) {
             double latitude = (Double) latObject;
