@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ElasticUI Demo</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/elasticsearch/elasticsearch.angular.js"></script>
+    <script src="elasticjs/elastic.js"></script>
+    <script src="elasticsearchui/elasticui.js"></script>
+    <style>
+    </style>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/jquery.tweet-parser/dist/jquery.tweetParser.min.js"></script>
+    <script>
+        angular
+                .module('tutorial', ['elasticui'])
+                .constant('euiHost', 'http://elasticsearch.demo:9200/'); // ACTION: change to cluster address
+                //.config(['$httpProvider', function($httpProvider) {
+                //        $httpProvider.defaults.useXDomain = true;
+                //        delete $httpProvider.defaults.headers.common['X-Requested-With'];}]);
+    </script>
+
+</head>
+<meta http-equiv="refresh" content="9">
+<body ng-app="tutorial" eui-index="'demo'" eui-sort="ejs.Sort('datetime').order('desc').type('couchbaseDocument')" eui-enabled="true"><!-- ACTION: change to index name -->
+
+<div class="container-fluid">
+
+    <div class="row-fluid">
+        <div class="span3">
+            <h3>Search</h3>
+            <eui-searchbox field="'text'" doctype="'couchbaseDocument'"></eui-searchbox> <!-- ACTION: change to field to search on -->
+            <!--<input type="text" eui-query="ejs.MatchQuery('text', querystring).type('couchbaseDocument')" ng-model="querystring" eui-enabled="querystring.length" />-->
+            <br>
+            <br>
+            <div class="panel panel-primary span12">
+                <div class="panel-heading">Single Select Facet</div>
+                <div class="panel-body">
+                    <eui-singleselect field="'name'" size="5"></eui-singleselect> <!-- ACTION: change to field to use as facet -->
+                </div>
+            </div>
+            <div class="panel panel-primary span12">
+                <div class="panel-heading">Multi select facet</div>
+                <div class="panel-body">
+                    <eui-checklist field="'user'" size="10"></eui-checklist> <!-- ACTION: change to field to use as facet -->
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <div class="span9">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Results</div>
+                <div class="panel-body">
+                    <h1>Results</h1>
+                    <ul>
+                        <li ng-repeat="doc in indexVM.results.hits.hits">
+                            <p> <img src="img/icon-social-small-twitter_1.png"> {{doc._source.doc.text}}</p> <!-- OPTIONAL: display more meaningful data instead of json -->
+                        </li>
+                    </ul>
+                    <eui-simple-paging></eui-simple-paging>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
