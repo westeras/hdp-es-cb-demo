@@ -1,0 +1,21 @@
+---
+- name: Install and launch Node app
+  hosts: all
+  sudo: yes
+  tasks:
+  - name: Install dependencies
+    yum: name={{ item }} state=latest
+    with_items:
+    - libselinux-python
+
+  - name: Setup yum repo
+    shell: curl -sL https://rpm.nodesource.com/setup | bash -
+
+  - name: Install node rpm
+    yum: name=nodejs state=latest
+
+  - name: Install node-http-server
+    npm: name=node-http-server global=yes
+
+  - name: copy app
+    copy: src=../elasticsearch-twitter-webapp dest=/opt/
