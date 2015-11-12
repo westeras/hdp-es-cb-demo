@@ -123,8 +123,7 @@ vagrant up elasticsearch.demo
 vagrant up couchbase.demo
 
 # when couchbase.demo finishes loading
-vagrant ssh couchbase.demo
-/opt/couchbase/bin/cbrestore /vagrant/sample_data/cb_backup/ http://localhost:8091 --bucket-source=demo --bucket-destination=demo
+vagrant ssh couchbase.demo -c "/opt/couchbase/bin/cbrestore /vagrant/sample_data/cb_backup/ http://localhost:8091 --bucket-source=demo --bucket-destination=demo"
 ```
 
 The sample dataset in hdp-es-cb-demo/vagrant/sample\_data/cb_backup contains roughly a thousand tweets dumped from a Couchbase instance that were ingested/processed using Storm.
