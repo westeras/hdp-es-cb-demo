@@ -1,0 +1,6 @@
+---
+
+- include: playbooks/couchbase/couchbase_install.yml
+- include: playbooks/couchbase/cluster_init.yml
+- include: playbooks/couchbase/create_bucket.yml
+# - include: playbooks/couchbase/xdcr_elastic.yml

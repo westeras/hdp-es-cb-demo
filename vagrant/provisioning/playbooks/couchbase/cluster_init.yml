@@ -1,0 +1,29 @@
+---
+- hosts: couchbase
+  sudo: False
+  gather_facts: False
+  tasks:
+    - name: Create cluster grouping
+      group_by: key={{ couchbase_server_node_role }}
+
+- hosts: primary
+  sudo: True
+#  serial: 1
+  gather_facts: False
+  vars:
+    couchbase_server_primary_node: "{{hostvars[groups['primary'][0]]['ansible_fqdn']}}"
+  tasks:
+    - name: Start couchbase-server
+      service: name=couchbase-server state=started
+
+    - name: Wait for Admin
+      wait_for: "port={{ couchbase_server_admin_port }} delay=5"
+
+    - name: Initialize Couchbase cluster
+      shell: "{{ couchbase_server_bin_path }}/couchbase-cli cluster-init -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --cluster-init-username={{ couchbase_server_admin }} --cluster-init-password={{ couchbase_server_password }} --cluster-init-port={{couchbase_server_admin_port}} --cluster-init-ramsize={{ couchbase_server_ram }}"
+
+    - name: Wait for Admin
+      wait_for: "port={{ couchbase_server_admin_port }} delay=5"
+
+    - name: Initialize primary node
+      shell: "{{ couchbase_server_bin_path }}/couchbase-cli node-init -c {{ couchbase_server_primary_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --cluster-init-username={{ couchbase_server_admin }} --node-init-hostname={{ ansible_fqdn }}"

@@ -1,0 +1,10 @@
+---
+
+# Download and install SELinux Python module (required by Ansible)
+- name: Install Dependencies
+  yum: name={{item}} state=present update_cache=yes
+  tags: installation
+  with_items:
+    - libselinux-python
+    - pkgconfig
+    - openssl098e

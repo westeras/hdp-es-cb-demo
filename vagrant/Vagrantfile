@@ -1,14 +1,18 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
 
+ANSIBLE_PLAYBOOK = ENV['ANSIBLE_PLAYBOOK'] || "provisioning/site.yml"
+VAGRANTFILE_API_VERSION = 2
+BOX_NAME = ENV['BOX_NAME'] || "bento/centos-6.7"
+
 machines = [
-  {:name => "elasticsearch.demo", :ip => "192.168.56.42", :memory => 1024, :ansible => "elasticsearch-single.yml"},
-  {:name => "couchbase.demo", :ip => "192.168.56.41", :memory => 1024, :ansible => "couchbase-single.yml"},
-#  {:name => "hdp.demo", :ip => "192.168.56.43", :memory => 4096, :ansible => "hdp-single.yml"},
-  {:name => "node.demo", :ip => "192.168.56.44", :memory => 1024, :ansible => "node.yml"}
+  {:name => "elasticsearch", :ip => "192.168.56.42", :memory => 1024, :ansible => "elasticsearch-single.yml", :groups => ["elastic"]},
+  {:name => "couchbase", :ip => "192.168.56.41", :memory => 1024, :ansible => "couchbase-single.yml", :groups => ["couchbase"]},
+#  {:name => "hdp", :ip => "192.168.56.43", :memory => 4096, :ansible => "hdp-single.yml", :groups => ["hdp"]},
+  {:name => "node", :ip => "192.168.56.44", :memory => 1024, :ansible => "node.yml", :groups => ["nodejs"]}
 ]
 
-Vagrant.configure(2) do |config|
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.insert_key = false
 
   if Vagrant.has_plugin?("vagrant-hostmanager")
@@ -35,20 +39,53 @@ Vagrant.configure(2) do |config|
 
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
+  domain_suffix = "demo"
   machines.each do |machine|
-    config.vm.define machine[:name] do |vmconfig|
-      vmconfig.vm.box = "bento/centos-6.7"
+    short_name = machine[:name]
+    domain_name = "#{short_name}.#{domain_suffix}"
+
+    config.vm.define short_name do |vmconfig|
+      vmconfig.vm.box = BOX_NAME
       vmconfig.vm.provider "virtualbox" do |v|
+        v.name = short_name
         v.memory = machine[:memory]
         v.cpus = `#{RbConfig::CONFIG['host_os'] =~ /darwin/ ? 'sysctl -n hw.ncpu' : 'nproc'}`.chomp
       end
 
-      vmconfig.vm.hostname = machine[:name]
+      vmconfig.vm.hostname = domain_name
       vmconfig.vm.network :private_network, ip: machine[:ip]
 
       vmconfig.vm.provision "ansible" do |ansible|
-        ansible.playbook = machine[:ansible]
+        ansible.playbook = ANSIBLE_PLAYBOOK
+        ansible.verbose = 'vvvv'
+
+        # Use helper method to define machine groups
+        ansible.groups = group_up(machines)
       end
     end
   end
+end
+
+# Helper method to define machine groupings
+def group_up (machines)
+  groups = Hash.new
+  machines.each do |machine|
+    name = machine[:name]
+    machine[:groups].each do |group|
+      if !groups.has_key?(group)
+        groups[group] = Array.new
+      end
+      group_list = groups[group]
+      if !group_list.include?(name)
+        group_list.push(name)
+      end
+    end
+  end
+  all_groups = Array.new
+  groups.each do |k, v|
+     all_groups.push(k)
+  end
+  groups["all_groups:children"] = all_groups
+
+  return groups
 end

@@ -1,0 +1,4 @@
+---
+
+- name: Source local settings
+  command: /bin/bash /etc/rc.local

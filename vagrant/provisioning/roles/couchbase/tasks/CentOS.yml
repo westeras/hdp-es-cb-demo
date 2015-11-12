@@ -1,0 +1,15 @@
+---
+- name: Install epel repo
+  yum: name=epel-release state=present
+
+- name: Install package dependencies
+  yum: name={{item}} state=present
+  with_items:
+    - openssl-1.0.1e
+    - python-pip
+    - libselinux-python
+    - pkgconfig
+
+- name: Install Couchbase package
+  sudo: True
+  yum: name=/vagrant/deps/{{ couchbase_package }} state=present
