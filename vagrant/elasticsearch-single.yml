@@ -46,7 +46,7 @@
     - "couchbase.username: couchbase"
     - "couchbase.password: couchbase"
     - "network.publish_host: {{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }}"
-    - “http.cors.enabled: true”
+    - "http.cors.enabled: true"
 
   - name: Start Elasticsearch
     service: name=elasticsearch state=started enabled=yes
