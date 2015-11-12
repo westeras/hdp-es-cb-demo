@@ -109,32 +109,9 @@ At this point, you should be able to see things happening in the Storm UI (http:
 
 ### To Run the Webapp
 
-1. Install Nodejs
-* You can see the download and instructions to install node here: https://nodejs.org/download/
-
-
-2. Install the node-http-server package
-
-   ```sh
-   npm install node-http-server
-   ```
-
-3. Install all dependencies for the web
-
-   ```sh
-   cd elasticsearch-twitter-webapp
-   npm install
-   ```
-
-4. Start the web (while in the elasticsearch-twitter-webapp folder)
-
-   ```sh
-   npm start
-   ```
-
-5. Open the webapp in the browser: go to http://localhost:8000/app/elasticuidemo.html
-*Feel free to modify this webapp as needed.  It uses elasticui (http://www.elasticui.com/).  This app can be more sophisticated and as time permits more work will be added to it.
-*Its an app that find the latest tweets elastic search gets and display them.  They will be displayed in date time order.  The UI refreshes every few seconds.  You can also search and see filters on user names (although the names are currently displayed after analysis).
+Open the webapp in the browser: go to http://node.demo:8000/app/elasticuidemo.html
+* Feel free to modify this webapp as needed.  It uses elasticui (http://www.elasticui.com/).  This app can be more sophisticated and as time permits more work will be added to it.
+* Its an app that find the latest tweets elastic search gets and display them.  They will be displayed in date time order.  The UI refreshes every few seconds.  You can also search and see filters on user names (although the names are currently displayed after analysis).
 
 ## If you don't want to work with the Hadoop part
 
