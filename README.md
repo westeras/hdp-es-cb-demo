@@ -190,4 +190,10 @@ SELECT * FROM tweets LIMIT 10;
 
 ## Troubleshooting
 ### Ambari fails to install components
-Ambari is prone to failure during cluster initilization and installation of it's components. A lot of the time this is due to timeouts because of long package downloads or some other long running process. Due to the automatic nature of the setup process, there is not an easy way to restart/continue the install after it fails. The solution is to use the master-
+Ambari is prone to failure during cluster initilization and installation of it's components. A lot of the time this is due to timeouts because of long package downloads or some other long running process. Due to the automatic nature of the setup process, there is not an easy way to restart/continue the install after it fails. The solution is to use the master-service-reinstall script. This script will use the Ambari REST service to read the configured components of the cluster, and reinstall them. 
+
+You can use the script by editing the configurations at the top of the script to match your HDP cluster (they are already configured for this demo's cluster). Then running the script like so:
+
+```sh
+./master-service-reinstall.sh
+```
