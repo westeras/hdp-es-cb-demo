@@ -14,8 +14,14 @@
   - name: Install node rpm
     yum: name=nodejs state=latest
 
-  - name: Install node-http-server
-    npm: name=node-http-server global=yes
-
   - name: copy app
     copy: src=../elasticsearch-twitter-webapp dest=/opt/
+
+  - name: install app
+    npm: path=/opt/elasticsearch-twitter-webapp
+
+  - name: install forever module
+    npm: name=forever global=yes state=latest
+
+  - name: start the app forever
+    shell: forever start -c "npm start" /opt/elasticsearch-twitter-webapp/
