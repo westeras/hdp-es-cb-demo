@@ -7,6 +7,7 @@
     yum: name={{ item }} state=latest
     with_items:
     - libselinux-python
+    - git
 
   - name: Setup yum repo
     shell: curl -sL https://rpm.nodesource.com/setup | bash -
@@ -24,4 +25,4 @@
     npm: name=forever global=yes state=latest
 
   - name: start the app forever
-    shell: forever start -c "npm start" /opt/elasticsearch-twitter-webapp/
+    shell: forever start -c "npm start --unsafe-perm" /opt/elasticsearch-twitter-webapp/
