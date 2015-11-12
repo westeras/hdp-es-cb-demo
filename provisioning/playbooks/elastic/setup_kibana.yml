@@ -1,0 +1,41 @@
+---
+- hosts: elastic
+  sudo: True
+  vars:
+    kibana_version: 4.0.1
+    kibana_package: kibana-{{ kibana_version }}-linux-x64.tar.gz
+    kibana_url: https://download.elasticsearch.org/kibana/kibana/{{ kibana_package }}
+    kibana_web_port: 5601
+  tasks:
+    - name: Download Kibana
+      get_url:
+        url="{{ kibana_url }}"
+        dest="/vagrant/vagrant_deps/{{ kibana_package }}"
+      register: new_archive
+
+    - name: Unarchive Kibana
+      unarchive:
+        src="/vagrant/vagrant_deps/{{ kibana_package }}"
+        dest="/usr/share/"
+        copy=no
+
+    - name: Add symlink
+      command: ln -s /usr/share/kibana-{{ kibana_version }}-linux-x64 /usr/share/kibana creates=/usr/share/kibana
+
+    - name: Copy Kibana daemon script
+      command: cp /vagrant/scripts/kibanad /usr/share/kibana/bin/kibanad
+
+    - name: Set Kibana daemon file permissions
+      file: path=/usr/share/kibana/bin/kibanad owner=root group=root mode=0755
+
+    - name: Copy Kibana init script
+      command: cp /vagrant/scripts/kibana4 /etc/init.d/kibana4
+
+    - name: Set Kibana init script file permissions
+      file: path=/etc/init.d/kibana4 owner=root group=root mode=0755
+
+    - name: Start Kibana
+      service: name=kibana4 state=started enabled=yes
+
+    - name: Wait for Kibana Web port
+      wait_for: port={{ kibana_web_port }} delay=5

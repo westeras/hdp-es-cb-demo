@@ -1,0 +1,49 @@
+---
+- hosts: elastic
+  sudo: True
+  vars:
+    cb_transport_plugin_version: 2.0.0
+    cb_transport_plugin_package: elasticsearch-transport-couchbase-{{ cb_transport_plugin_version }}.zip
+    cb_transport_plugin_url: http://packages.couchbase.com.s3.amazonaws.com/releases/elastic-search-adapter/{{ cb_transport_plugin_version }}/{{ cb_transport_plugin_package }}
+  tasks:
+    - name: Install Couchbase Transport plugin
+      command: "{{ elastic_bin_path }}/plugin -i transport-couchbase --url {{ cb_transport_plugin_url }} --timeout 30s"
+      args:
+        creates: "{{ elastic_home_path }}/plugins/transport-couchbase"
+
+    - name: Set Elasticsearch Couchbase configurations
+      lineinfile: dest=/etc/elasticsearch/elasticsearch.yml line="{{ item }}" insertafter=EOF state=present
+      with_items:
+        - "couchbase.username: couchbase"
+        - "couchbase.password: couchbase"
+        - "network.publish_host: {{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }}"
+        - "http.cors.enabled: true"
+
+    - name: Restart Elasticsearch
+      service: name=elasticsearch state=restarted
+
+    - name: Wait for Elastic Admin
+      wait_for: port={{ elastic_api_port }} delay=5
+
+    - name: Get contents demo_couchbase_template.json
+      shell: cat /vagrant/files/demo_couchbase_template.json
+      register: demo_couchbase_template
+
+    - name: Upload Couchbase Index template
+      uri:
+        url=http://{{ ansible_fqdn }}:{{ elastic_api_port }}/_template/couchbase
+        method=PUT body='{{ demo_couchbase_template.stdout }}'
+        status_code=200
+
+    - name: Check Couchbase index exists
+      uri:
+        url="http://{{ ansible_fqdn }}:{{ elastic_api_port }}/demo"
+        method=HEAD
+      ignore_errors: True
+      register: index_exists
+
+    - name: Create the Couchbase index
+      uri:
+        url="http://{{ ansible_fqdn }}:{{ elastic_api_port }}/demo"
+        method=PUT
+      when: index_exists|failed
