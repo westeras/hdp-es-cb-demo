@@ -58,14 +58,29 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       vmconfig.vm.provision "ansible" do |ansible|
         ansible.playbook = ANSIBLE_PLAYBOOK
 
-        # Use helper method to define machine groups
         ansible.groups = group_up(machines)
       end
     end
   end
 end
 
-# Helper method to define machine groupings
+# Method to define Ansible machine groupings
+# @param machines - an array of mappings with at least the fields :name and
+#                  :groups, where :name is a string and :groups is an array
+# @return Returns a mapping of groups to names.
+#
+# Example:
+# machines = [
+# {:name => "nodejs", :groups => ["webserver", "frontend"]},
+# {:name => "ambari", :groups => ["hadoop", "frontend"]},
+# {:name => "slave", :groups => ["hadoop", "backend"]}]
+#
+# group_up(machines)
+# {"webserver"=>["nodejs"],
+# "frontend"=>["nodejs", "ambari"],
+# "hadoop"=>["ambari", "slave"],
+# "backend"=>["slave"],
+# "all_groups:children"=>["webserver", "frontend", "hadoop", "backend"]}
 def group_up (machines)
   group_map = Hash.new
   machines.each do |machine|
