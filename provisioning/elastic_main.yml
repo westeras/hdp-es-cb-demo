@@ -1,0 +1,5 @@
+---
+
+- include: playbooks/elastic/install_elastic.yml
+- include: playbooks/elastic/setup_kibana.yml
+- include: playbooks/elastic/setup_cb_transport.yml

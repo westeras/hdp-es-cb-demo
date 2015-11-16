@@ -1,0 +1,20 @@
+---
+# This installs the ElasticSearch software and Marvel plugin.
+# See the other playbooks Kibana and additional setup.
+
+- hosts: elastic
+  sudo: True
+  roles:
+    - common
+    - elastic
+  tasks:
+    - name: Start Elasticsearch
+      service: name=elasticsearch state=started enabled=yes
+
+    - name: Install Marvel Plugin
+      command: "{{ elastic_bin_path }}/plugin -i elasticsearch/marvel/latest --timeout 30s"
+      args:
+        creates: "{{ elastic_home_path }}/plugins/marvel"
+
+    - name: Wait for Elastic REST port
+      wait_for: port={{ elastic_api_port }} delay=5

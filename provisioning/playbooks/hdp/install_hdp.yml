@@ -1,0 +1,9 @@
+---
+# This installs the prerequsites for HDP.
+# See the other playbooks for Ambari installation and additional cluster setup.
+
+- hosts: hdp
+  sudo: True
+  roles:
+    - common
+    - hdp

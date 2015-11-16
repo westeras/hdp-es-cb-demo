@@ -1,0 +1,9 @@
+---
+# This installs NodeJS and any global npm packages only and does not
+# actually start a Node app, see the other playbooks for that.
+
+- hosts: node
+  sudo: True
+  roles:
+    - common
+    - nodejs

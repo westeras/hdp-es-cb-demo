@@ -1,0 +1,34 @@
+---
+- hosts: couchbase
+  sudo: False
+  gather_facts: False
+  tasks:
+    - name: Create cluster grouping
+      group_by: key={{ couchbase_server_node_role }}
+
+- hosts: primary
+  sudo: False
+  gather_facts: False
+  vars:
+    couchbase_server_primary_node: "{{hostvars[groups['primary'][0]]['ansible_fqdn']}}"
+    couchbase_server_bucket_name: demo
+    couchbase_server_bucket_type: couchbase
+    couchbase_server_bucket_ram: 796
+    couchbase_server_bucket_port: 11211
+    couchbase_server_bucket_replica: 0
+  tasks:
+    - name: Wait for Couchbase Admin
+      wait_for: port={{ couchbase_server_admin_port }} delay=5
+
+    - name: Check demo buckets exists
+      uri: url="http://{{ couchbase_server_primary_node }}:{{ couchbase_server_admin_port }}/pools/default/buckets/{{ couchbase_server_bucket_name }}" method=GET user={{ couchbase_server_admin }}  password={{ couchbase_server_password }}
+      ignore_errors: True
+      register: bucket_exists
+
+    - name: Create demo bucket
+      command: "{{ couchbase_server_bin_path }}/couchbase-cli bucket-create -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} --bucket={{ couchbase_server_bucket_name }} --bucket-type={{ couchbase_server_bucket_type }} --bucket-port={{ couchbase_server_bucket_port }} --bucket-ramsize={{ couchbase_server_bucket_ram }} --bucket-replica={{ couchbase_server_bucket_replica }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }}"
+      when: bucket_exists|failed
+
+    - name: Wait for Couchbase Admin
+      wait_for: port={{ couchbase_server_admin_port }} delay=3
+      when: bucket_exists|failed
