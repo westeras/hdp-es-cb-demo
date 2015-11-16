@@ -1,0 +1,9 @@
+---
+
+# CentOS tasks
+- include: CentOS.yml
+  when: ansible_distribution  == "CentOS"
+
+- name: Install global npm packages
+  shell: npm install -g {{ item }}
+  with_items: nodejs_global_packages

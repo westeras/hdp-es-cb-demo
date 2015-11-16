@@ -1,0 +1,18 @@
+---
+- hosts: node
+  sudo: True
+  gather_facts: False
+  vars:
+    nodejs_app_name: elasticsearch-twitter-webapp
+    nodejs_app_dir: /vagrant/{{ nodejs_app_name }}
+  tasks:
+    - name: copy app
+      command: cp -rf {{ nodejs_app_dir }} /opt/
+      args:
+        creates: /opt/{{ nodejs_app_name }}/
+
+    - name: install app
+      npm: path=/opt/{{ nodejs_app_name }}
+
+    - name: start the app forever
+      shell: forever start -c "npm start --unsafe-perm" /opt/{{ nodejs_app_name }}/

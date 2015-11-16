@@ -1,0 +1,13 @@
+---
+- name: Setup Node.js repo
+  shell: curl -sL https://rpm.nodesource.com/setup | bash -
+
+- name: Install NodeJS
+  yum: name={{item}} state=present update_cache=yes
+  tags: installation
+  with_items:
+    - nodejs
+    - git
+    - gcc-c++
+    - openssl-devel
+    - make

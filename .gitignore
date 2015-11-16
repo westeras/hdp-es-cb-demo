@@ -1,5 +1,7 @@
 twitter4j.properties
 vagrant/rpms/
+vagrant/deps/
+vagrant_deps/
 log/
 
 ### Eclipse template

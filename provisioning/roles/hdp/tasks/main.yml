@@ -1,0 +1,40 @@
+---
+
+# CentOS tasks
+- include: CentOS.yml
+  when: ansible_distribution  == "CentOS"
+
+- name: Install Python requests module
+  pip: name={{item}}
+  with_items:
+    - httplib2
+    - requests
+
+- service: name=iptables state=stopped enabled=no
+
+- service: name=ntpd state=started enabled=yes
+
+- sysctl: name=vm.swappiness value=1 state=present ignoreerrors=yes
+
+- name: Disable THP
+  sudo: True
+  shell: echo 'for i in /sys/kernel/mm/*transparent_hugepage/enabled; do echo never > $i; done' >> /etc/rc.local
+  shell: echo 'for i in /sys/kernel/mm/*transparent_hugepage/defrag; do echo never > $i; done' >> /etc/rc.local
+  shell: for i in /sys/kernel/mm/*transparent_hugepage/enabled; do echo never > $i; done
+  when: ansible_distribution_version != "12.04"
+  notify: Source local settings
+
+- name: Update /etc/security/limits.conf
+  lineinfile: dest=/etc/security/limits.conf
+              insertbefore='# End of file'
+              line='* - nofile 65536'
+              state=present
+
+# Setup SSH keys for Vagrant User
+- user: name=vagrant generate_ssh_key=yes
+
+- name: Copy public key
+  command: cat /home/vagrant/.ssh/id_rsa.pub
+  register: id_rsa_pub
+
+- authorized_key: user=vagrant key='{{ id_rsa_pub.stdout }}'

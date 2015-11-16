@@ -1,0 +1,4 @@
+---
+
+- include: playbooks/nodejs/install_node.yml
+- include: playbooks/nodejs/setup_elasticsearch-twitter-webapp.yml
