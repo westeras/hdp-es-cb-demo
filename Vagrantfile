@@ -57,7 +57,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       vmconfig.vm.provision "ansible" do |ansible|
         ansible.playbook = ANSIBLE_PLAYBOOK
-        ansible.verbose = 'vvvv'
 
         # Use helper method to define machine groups
         ansible.groups = group_up(machines)
