@@ -97,9 +97,9 @@ public class SearchResponse<T> implements Serializable {
 	 */
 	public void addError(Exception e) {
 		this.ok = false;
-		Collection<String> errs = new ArrayList<String>();
+		Collection<String> errs = new ArrayList<>();
 		if (this.errors != null) Collections.addAll(errs, this.errors);
 		errs.add(e.getMessage());
-		this.errors = (String[])errs.toArray(new String[errs.size()]);
+		this.errors = errs.toArray(new String[errs.size()]);
 	}
 }
