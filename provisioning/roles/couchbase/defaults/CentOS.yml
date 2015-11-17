@@ -1,0 +1,4 @@
+---
+couchbase_version: 3.0.2
+couchbase_package: couchbase-server-enterprise-{{ couchbase_version }}-centos6.x86_64.rpm
+couchbase_url: http://packages.couchbase.com/releases/{{ couchbase_version }}/{{ couchbase_package }}

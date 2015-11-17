@@ -1,0 +1,12 @@
+---
+
+# Group the hosts by distibution to use distibution-specific variables
+- hosts: all
+  tasks:
+    - group_by: key=os_{{ ansible_distribution }}
+
+- include: couchbase_main.yml
+- include: elastic_main.yml
+- include: playbooks/couchbase/xdcr_elastic.yml
+- include: hdp_main.yml
+- include: nodejs_main.yml

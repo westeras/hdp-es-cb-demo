@@ -1,0 +1,12 @@
+---
+- name: Install epel repo
+  yum: name=epel-release state=present
+
+- name: Install package dependencies
+  yum: name={{item}} state=present
+  with_items:
+    - python-pip
+
+- name: Install Couchbase package
+  sudo: True
+  yum: name=/vagrant/vagrant_deps/{{ couchbase_package }} state=present

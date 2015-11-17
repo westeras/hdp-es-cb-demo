@@ -17,7 +17,7 @@ r = requests.get(url, headers=headers, auth=('admin', 'admin'))
 if mapping_name not in [cluster['Clusters']['cluster_name'] for cluster in r.json()['items']]:
     print 'Submitting cluster topology to Ambari'
     url = 'http://{0}:8080/api/v1/clusters/{1}'.format(hostname, cluster_name)
-    with open("/vagrant/{0}.json".format(mapping_name), "r") as cluster:
+    with open("/vagrant/files/{0}.json".format(mapping_name), "r") as cluster:
         content = cluster.read()
 
     r = requests.post(url, data=json.dumps(content), headers=headers, auth=('admin', 'admin'))

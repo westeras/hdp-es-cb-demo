@@ -44,7 +44,7 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
    vagrant plugin install vagrant-hostmanager
    vagrant plugin install vagrant-cachier
    ```
-   
+
 4. Install Ansible
 
    ```sh
@@ -55,12 +55,20 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
 5. Spin up virtual machines
 
    ```sh
-   cd hdp-es-cb-demo/vagrant/
+   cd hdp-es-cb-demo/
    vagrant up
    ```
-   
+
 After the last machine has been provisioned, you should be able to open http://hdp.demo:8080, log into Ambari with admin:admin and see that components are being installed (note the installation of HDP will take quite a while and requires a solid internet connection).
-   
+
+#### Useful Vagrant commands
+
+```sh
+vagrant destroy         # tear down of all machines
+vagrant ssh [hostname]  # ssh into the given hostname (specified at the top of the Vagrantfile)
+vagrant provision       # rerun the ansible provisioning steps on the running machines
+  ```
+
 ## Running the demo
 
 ### Setup
@@ -93,7 +101,7 @@ After the last machine has been provisioned, you should be able to open http://h
 2. Run Twitter producer:
 
    ```sh
-   # on hdp.demo (use 'vagrant ssh hdp.demo')
+   # on hdp.demo (use 'vagrant ssh hdp')
    java -cp /vagrant/storm-search-demo-1.0-SNAPSHOT.jar com.avalonconsult.TwitterProducer <query terms>
    ```
    Note: choose query terms that won't return a massive influx of tweets and overwhelm your vm
@@ -119,14 +127,14 @@ It is possible to bypass the Hadoop portion of the demo and load some sample dat
 
 ```sh
 # bring up couchbase and elasticsearch nodes (if not up already)
-vagrant up elasticsearch.demo
-vagrant up couchbase.demo
+vagrant up elasticsearch
+vagrant up couchbase
 
 # when couchbase.demo finishes loading
-vagrant ssh couchbase.demo -c "/opt/couchbase/bin/cbrestore /vagrant/sample_data/cb_backup/ http://localhost:8091 --bucket-source=demo --bucket-destination=demo"
+vagrant ssh couchbase -c "/opt/couchbase/bin/cbrestore /vagrant/files/sample_data/cb_backup/ http://localhost:8091 --bucket-source=demo --bucket-destination=demo"
 ```
 
-The sample dataset in hdp-es-cb-demo/vagrant/sample\_data/cb_backup contains roughly a thousand tweets dumped from a Couchbase instance that were ingested/processed using Storm.
+The sample dataset in hdp-es-cb-demo/files/sample\_data/cb_backup contains roughly a thousand tweets dumped from a Couchbase instance that were ingested/processed using Storm.
 
 Also, for those interested, this is what you would run if you wanted to back up your own Couchbase instance:
 ```sh
@@ -137,12 +145,12 @@ This command creates a backup of the demo bucket under /home/vagrant/cb_backup
 ## Running Kibana
 Kibana should be started after provisioning the Elasticsearch node.  However, if for some reason Kibana isn't started, Elasticsearch must be running in order for Kibana to successfully start.  If you are having issues getting Kibana to run, you can either reprovision with:
 ```sh
-# from hdp-es-cb-demo/vagrant/ on host machine
-vagrant provision elasticsearch.demo
+# from hdp-es-cb-demo/ on host machine
+vagrant provision elasticsearch
 ```
 Otherwise, try the following steps to get Kibana running:
 ```sh
-vagrant ssh elasticsearch.demo
+vagrant ssh elasticsearch
 sudo service elasticsearch status
 
 # If elasticsearch is running, you can start Kibana
@@ -161,25 +169,25 @@ It is nice to not have to rebuild the environment from scratch just to reset the
 Deletes the data bucket, removes the replication endpoint, recreates the data bucket, recreates the replication endpoint, recreates and starts the replication.
 
 ```bash
-vagrant ssh couchbase.demo
-/vagrant/reset_couchbase.sh
+vagrant ssh couchbase
+/vagrant/scripts/reset_couchbase.sh
 ```
 
 ### Elasticsearch
 Deletes the index and recreates it.
 
 ```bash
-vagrant ssh elasticsearch.demo
-/vagrant/reset_elasticsearch.sh
+vagrant ssh elasticsearch
+/vagrant/scripts/reset_elasticsearch.sh
 ```
 
 ## Running Hive Analytics
-The script hdp-es-cb-demo/vagrant/create_table.q will place an external Hive table (called tweets) over the HDFS directory /tmp/tweets.  All you need to do is run the script.  The table will be created regardless of whether or not any data exists in the directory.
+The script hdp-es-cb-demo/scripts/create_table.q will place an external Hive table (called tweets) over the HDFS directory /tmp/tweets.  All you need to do is run the script.  The table will be created regardless of whether or not any data exists in the directory.
 ```sh
-vagrant ssh hdp.demo
+vagrant ssh hdp
 
 # Run the script to create the Hive table
-hive -f /vagrant/create_table.q
+hive -f /vagrant/scripts/create_table.q
 
 # Open the Hive CLI and start querying the table
 hive
@@ -190,7 +198,7 @@ SELECT * FROM tweets LIMIT 10;
 
 ## Troubleshooting
 ### Ambari fails to install components
-Ambari is prone to failure during cluster initilization and installation of it's components. A lot of the time this is due to timeouts because of long package downloads or some other long running process. Due to the automatic nature of the setup process, there is not an easy way to restart/continue the install after it fails. The solution is to use the master-service-reinstall script. This script will use the Ambari REST service to read the configured components of the cluster, and reinstall them. 
+Ambari is prone to failure during cluster initialization and installation of it's components. A lot of the time this is due to timeouts because of long package downloads or some other long running process. Due to the automatic nature of the setup process, there is not an easy way to restart/continue the install after it fails. The solution is to use the master-service-reinstall script. This script will use the Ambari REST service to read the configured components of the cluster, and reinstall them.
 
 You can use the script by editing the configurations at the top of the script to match your HDP cluster (they are already configured for this demo's cluster). Then running the script like so:
 

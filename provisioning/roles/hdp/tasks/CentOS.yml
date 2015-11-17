@@ -1,0 +1,16 @@
+---
+- name: Install epel repo
+  yum: name=epel-release state=present
+
+- name: Install packages
+  yum: name={{item}} state=present
+  with_items:
+    - java
+    - wget
+    - ntp
+    - python-pip
+
+- selinux: state=disabled
+
+- name: Disable SELinux
+  command: setenforce 0

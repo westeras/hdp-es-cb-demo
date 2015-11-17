@@ -1,0 +1,4 @@
+---
+
+- include: playbooks/hdp/install_hdp.yml
+- include: playbooks/hdp/setup_ambari.yml

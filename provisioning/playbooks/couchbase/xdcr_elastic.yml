@@ -1,0 +1,20 @@
+---
+- hosts: couchbase
+  gather_facts: False
+  sudo: False
+  tasks:
+    - name: Create XDCR destination cluster
+      command: "{{ couchbase_server_bin_path }}/couchbase-cli xdcr-setup -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} --create --xdcr-cluster-name=elasticsearch --xdcr-hostname=elasticsearch.demo:9091 --xdcr-username={{ couchbase_server_admin }} --xdcr-password={{ couchbase_server_password }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }}"
+      ignore_errors: True
+      register: created_xdcr_dest_cluster
+
+    - wait_for: port={{ couchbase_server_admin_port }} delay=3
+      when: created_xdcr_dest_cluster|success
+
+    - name: Create replication to Elasticsearch
+      command: "{{ couchbase_server_bin_path }}/couchbase-cli xdcr-replicate -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} --create --xdcr-cluster-name=elasticsearch --xdcr-from-bucket=demo --xdcr-to-bucket=demo --xdcr-replication-mode=capi -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }}"
+      ignore_errors: True
+      register: created_xdcr_replication
+
+    - wait_for: port={{ couchbase_server_admin_port }} delay=3
+      when: created_xdcr_replication|success

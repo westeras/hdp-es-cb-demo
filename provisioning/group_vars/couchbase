@@ -1,0 +1,7 @@
+---
+couchbase_server_admin: "couchbase"
+couchbase_server_password: "couchbase"
+couchbase_server_ram: 796
+couchbase_server_admin_port: 8091
+couchbase_server_home_path: "/opt/couchbase"
+couchbase_server_bin_path: "{{ couchbase_server_home_path }}/bin"

@@ -1,0 +1,14 @@
+---
+
+- name: Distribution specific variables
+  include_vars: "../defaults/{{ ansible_distribution }}.yml"
+
+# CentOS tasks
+- include: CentOS.yml
+  when: ansible_distribution == "CentOS"
+
+- name: Install httplib2
+  pip: name=httplib2
+
+- name: Start Elasticsearch
+  service: name=elasticsearch state=started enabled=yes

@@ -1,0 +1,5 @@
+---
+elastic_api_port: 9200
+elastic_home_path: "/usr/share/elasticsearch"
+elastic_bin_path: "{{ elastic_home_path }}/bin"
+elastic_local_package: false
