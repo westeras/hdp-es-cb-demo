@@ -11,7 +11,7 @@ public class SearchResult implements Serializable {
 	
 	protected long took;
 	protected long totalHits;
-	protected List<Hit> hits = new ArrayList<Hit>();
+	protected List<Hit> hits = new ArrayList<>();
 
 	public SearchResult() {
 	}

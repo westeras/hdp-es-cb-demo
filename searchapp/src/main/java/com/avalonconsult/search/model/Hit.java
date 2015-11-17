@@ -13,7 +13,7 @@ public class Hit implements Serializable {
 	
 	protected String source;
 	
-	protected Collection<String> highlights = new ArrayList<String>();
+	protected Collection<String> highlights = new ArrayList<>();
 	
 	
 	/**
