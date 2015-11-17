@@ -5,6 +5,7 @@
   vars:
     nodejs_app_name: elasticsearch-twitter-webapp
     nodejs_app_dir: /vagrant/{{ nodejs_app_name }}
+    app_port: 8000
   tasks:
     - name: copy app
       command: cp -rf {{ nodejs_app_dir }} /opt/
@@ -16,3 +17,6 @@
 
     - name: start the app forever
       command: forever start -c "npm start --unsafe-perm" /opt/{{ nodejs_app_name }}/
+
+    - name: wait for elasticsearch-twitter-webapp to start
+      wait_for: port={{ app_port }} delay=5
