@@ -2,8 +2,7 @@
 /*global angular:true */
 'use strict';
 
-angular.module('demo', [
-    'demo.controllers',
-    'demo.directives',
-    'elasticjs.service'
-]);
+angular.module('demo', ['ngRoute', 'ui.bootstrap', 'demo.search'])
+    .config(['$routeProvider', function($routeProvider) {
+        $routeProvider.otherwise({redirectTo: '/search'});
+    }]);

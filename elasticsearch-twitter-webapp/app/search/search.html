@@ -1,0 +1,44 @@
+<meta http-equiv="refresh" content="9">
+
+<div class="container-fluid" eui-index="'demo'" eui-sort="ejs.Sort('datetime').order('desc').type('couchbaseDocument')" eui-enabled="true"><!-- ACTION: change to index name -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Search</div>
+                <div class="panel-body">
+                    <eui-searchbox field="'text'" doctype="'couchbaseDocument'"></eui-searchbox> <!-- ACTION: change to field to search on -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Single Select Facet</div>
+                <div class="panel-body">
+                    <eui-singleselect field="'name'" size="5"></eui-singleselect> <!-- ACTION: change to field to use as facet -->
+                </div>
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Multi select facet</div>
+                <div class="panel-body">
+                    <eui-checklist field="'user'" size="10"></eui-checklist> <!-- ACTION: change to field to use as facet -->
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Results</div>
+                <div class="panel-body">
+                    <ul>
+                        <li ng-repeat="doc in indexVM.results.hits.hits">
+                            <p><img src="img/icon-social-small-twitter_1.png">{{doc._source.doc.text}}</p> <!-- OPTIONAL: display more meaningful data instead of json -->
+                        </li>
+                    </ul>
+                    <eui-simple-paging></eui-simple-paging>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
