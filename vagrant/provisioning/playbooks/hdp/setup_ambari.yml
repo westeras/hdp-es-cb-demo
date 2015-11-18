@@ -3,7 +3,7 @@
   sudo: True
   vars:
     hdp_repo: http://public-repo-1.hortonworks.com
-    vagrant_deps_path: /vagrant/vagrant_deps
+    vagrant_deps_path: /vagrant/deps
     vagrant_script_path: /vagrant/scripts
   tasks:
     - name: Download ambari.repo

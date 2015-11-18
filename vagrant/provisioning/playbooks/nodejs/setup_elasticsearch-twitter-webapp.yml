@@ -13,7 +13,7 @@
       file: path=/opt/{{ nodejs_app_name }} state=absent
 
     - name: copy app
-      copy: src=../../../{{ nodejs_app_name }} dest=/opt/ owner=root group=root
+      copy: src=../../../../{{ nodejs_app_name }} dest=/opt/ owner=root group=root
 
     - name: start the app forever
       command: forever start -c "npm start --unsafe-perm" /opt/{{ nodejs_app_name }}/

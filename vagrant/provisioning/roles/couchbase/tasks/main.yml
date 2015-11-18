@@ -4,11 +4,11 @@
   include_vars: "../defaults/{{ ansible_distribution }}.yml"
 
 - name: Check for Couchbase Local Download
-  stat: path=/vagrant/vagrant_deps/{{ couchbase_package }}
+  stat: path=/vagrant/deps/{{ couchbase_package }}
   register: couchbase_local_package
 
 - name: Download Couchbase RPM locally
-  get_url: url={{ couchbase_url }} dest=/vagrant/vagrant_deps/{{ couchbase_package }}
+  get_url: url={{ couchbase_url }} dest=/vagrant/deps/{{ couchbase_package }}
   when: not couchbase_local_package.stat.exists
 
 # CentOS tasks
