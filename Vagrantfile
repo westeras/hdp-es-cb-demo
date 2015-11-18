@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
 
-ANSIBLE_PLAYBOOK = ENV['ANSIBLE_PLAYBOOK'] || "provisioning/site.yml"
+ANSIBLE_PLAYBOOK = ENV['ANSIBLE_PLAYBOOK'] || "vagrant/provisioning/site.yml"
 VAGRANTFILE_API_VERSION = 2
 BOX_NAME = ENV['BOX_NAME'] || "bento/centos-6.7"
 
@@ -37,7 +37,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # For more information please check http://docs.vagrantup.com/v2/synced-folders/basic_usage.html
   end
 
-  config.vm.synced_folder ".", "/vagrant", type: "nfs"
+  config.vm.synced_folder "./vagrant", "/vagrant", type: "nfs"
 
   domain_suffix = "demo"
   machines.each do |machine|
