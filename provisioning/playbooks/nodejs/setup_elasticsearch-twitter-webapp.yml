@@ -4,16 +4,16 @@
   gather_facts: False
   vars:
     nodejs_app_name: elasticsearch-twitter-webapp
-    nodejs_app_dir: /vagrant/{{ nodejs_app_name }}
     app_port: 8000
   tasks:
-    - name: copy app
-      command: cp -rf {{ nodejs_app_dir }} /opt/
-      args:
-        creates: /opt/{{ nodejs_app_name }}/
+    - name: stop all forever apps
+      command: forever stopall
 
-    - name: install app
-      npm: path=/opt/{{ nodejs_app_name }}
+    - name: remove app
+      file: path=/opt/{{ nodejs_app_name }} state=absent
+
+    - name: copy app
+      copy: src=../../../{{ nodejs_app_name }} dest=/opt/ owner=root group=root
 
     - name: start the app forever
       command: forever start -c "npm start --unsafe-perm" /opt/{{ nodejs_app_name }}/
