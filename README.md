@@ -197,6 +197,24 @@ SELECT * FROM tweets LIMIT 10;
 ```
 
 ## Troubleshooting
+### Vagrant fails while mounting shared folders
+If you run ```vagrant up``` and get an error similar to:
+```sh
+==> elasticsearch: Mounting NFS shared folders...
+The following SSH command responded with a non-zero exit status.
+Vagrant assumes that this means the command failed!
+
+mount -o 'vers=3,udp' 192.168.56.1:'/Users/kruthar/projects/elasticsearch/hdp-es-cb-demo' /vagrant
+
+Stdout from the command:
+
+
+
+Stderr from the command:
+
+mount.nfs: access denied by server while mounting 192.168.56.1:/Users/kruthar/projects/elasticsearch/hdp-es-cb-demo
+```
+you may have some conflicting shared directory information stored in /etc/exports on your local machine. Remove any lines that pertain to this project and try again.
 ### Ambari fails to install components
 Ambari is prone to failure during cluster initialization and installation of it's components. A lot of the time this is due to timeouts because of long package downloads or some other long running process. Due to the automatic nature of the setup process, there is not an easy way to restart/continue the install after it fails. The solution is to use the master-service-reinstall script. This script will use the Ambari REST service to read the configured components of the cluster, and reinstall them.
 
