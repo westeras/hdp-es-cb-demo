@@ -10,29 +10,12 @@ It automatically provisions three virtual machines running CentOS 6:
 This demo illustrates a relatively common business use case: the use of Hadoop to stream data from Twitter as well as provide deep, reliable archive storage, in conjunction with a Couchbase instance to buffer tweets for ad hoc analysis, and an Elasticsearch instance to enable search.
 
 ## Getting the project
-### If you are planning on contributing, do the following:
 
-1. fork project
-2. clone your fork of the project to your machine
-3. add this project as the upstream source
+```sh
+git clone https://github.com/westeras/hdp-es-cb-demo
+```
 
-    ```sh
-    git remote add upstream https://github.com/westeras/hdp-es-cb-demo
-    ```
-4. create a branch for yourself
-
-    ```sh
-    git branch [branch-name]
-    git checkout [branch-name]
-    ```
-
-### Otherwise if you just want to run the demo:
-
-1. clone project
-
-   ```sh
-   git clone https://github.com/westeras/hdp-es-cb-demo
-   ```
+or, checkout our sweet guide to [contributing](https://github.com/westeras/hdp-es-cb-demo/blob/master/CONTRIBUTING.md).
 
 ## Setting up the Environment
 
