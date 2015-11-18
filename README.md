@@ -2,10 +2,10 @@
 
 This project contains a fully integrated Hadoop+Search demo provisioned by Vagrant
 
-It automatically provisions three virtual machines running CentOS 6.6:
+It automatically provisions three virtual machines running CentOS 6:
 * one node hosting a Couchbase server
 * one node hosting an Elasticsearch server
-* a fully functional, one node Hadoop cluster running Hortonworks HDP 2.2
+* a fully functional, one node Hadoop cluster running Hortonworks HDP
 
 This demo illustrates a relatively common business use case: the use of Hadoop to stream data from Twitter as well as provide deep, reliable archive storage, in conjunction with a Couchbase instance to buffer tweets for ad hoc analysis, and an Elasticsearch instance to enable search.
 
@@ -67,7 +67,7 @@ After the last machine has been provisioned, you should be able to open http://h
 vagrant destroy         # tear down of all machines
 vagrant ssh [hostname]  # ssh into the given hostname (specified at the top of the Vagrantfile)
 vagrant provision       # rerun the ansible provisioning steps on the running machines
-  ```
+```
 
 ## Running the demo
 
@@ -87,7 +87,7 @@ vagrant provision       # rerun the ansible provisioning steps on the running ma
 
    ```sh
    # on your local machine
-   cd hdp-es-cb-demo/
+   cd storm-search-demo/
    mvn clean package
    ```
 
@@ -95,7 +95,7 @@ vagrant provision       # rerun the ansible provisioning steps on the running ma
 
    ```sh
    # on your local machine
-   cp target/storm-search-demo-1.0-SNAPSHOT.jar vagrant/
+   cp storm-search-demo/target/storm-search-demo-1.0-SNAPSHOT.jar vagrant/
    ```
 
 2. Run Twitter producer:
@@ -144,11 +144,14 @@ This command creates a backup of the demo bucket under /home/vagrant/cb_backup
 
 ## Running Kibana
 Kibana should be started after provisioning the Elasticsearch node.  However, if for some reason Kibana isn't started, Elasticsearch must be running in order for Kibana to successfully start.  If you are having issues getting Kibana to run, you can either reprovision with:
+
 ```sh
 # from hdp-es-cb-demo/ on host machine
 vagrant provision elasticsearch
 ```
+
 Otherwise, try the following steps to get Kibana running:
+
 ```sh
 vagrant ssh elasticsearch
 sudo service elasticsearch status
@@ -183,6 +186,7 @@ vagrant ssh elasticsearch
 
 ## Running Hive Analytics
 The script hdp-es-cb-demo/scripts/create_table.q will place an external Hive table (called tweets) over the HDFS directory /tmp/tweets.  All you need to do is run the script.  The table will be created regardless of whether or not any data exists in the directory.
+
 ```sh
 vagrant ssh hdp
 
