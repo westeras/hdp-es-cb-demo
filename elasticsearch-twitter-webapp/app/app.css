@@ -28,3 +28,8 @@
     content: "";
     padding: 0;
 }
+
+/* Fix multi select facet in panel */
+div.panel-body > eui-checklist > ul.nav {
+    padding-left: 15px;
+}
