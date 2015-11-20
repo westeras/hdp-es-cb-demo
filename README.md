@@ -3,9 +3,12 @@
 This project contains a fully integrated Hadoop+Search demo provisioned by Vagrant
 
 It automatically provisions three virtual machines running CentOS 6:
+
 * one node hosting a Couchbase server
 * one node hosting an Elasticsearch server
-* a fully functional, one node Hadoop cluster running Hortonworks HDP
+* one node hosting two different search applications
+
+There is also a fully functional one node Hadoop cluster running Hortonworks HDP for live streaming and processing of Twitter data. This machine is by default turned OFF as it takes awhile to provision, and automatically installing HDP is not highly reliable. Instructions for provisioning this machine into the data flow are listed below.
 
 This demo illustrates a relatively common business use case: the use of Hadoop to stream data from Twitter as well as provide deep, reliable archive storage, in conjunction with a Couchbase instance to buffer tweets for ad hoc analysis, and an Elasticsearch instance to enable search.
 
@@ -15,7 +18,7 @@ This demo illustrates a relatively common business use case: the use of Hadoop t
 git clone https://github.com/westeras/hdp-es-cb-demo
 ```
 
-or, checkout our sweet guide to [contributing](https://github.com/westeras/hdp-es-cb-demo/blob/master/CONTRIBUTING.md).
+Or, checkout our sweet guide to [contributing](https://github.com/westeras/hdp-es-cb-demo/blob/master/CONTRIBUTING.md).
 
 ## Setting up the Environment
 
@@ -42,8 +45,6 @@ or, checkout our sweet guide to [contributing](https://github.com/westeras/hdp-e
    vagrant up
    ```
 
-After the last machine has been provisioned, you should be able to open http://hdp.demo:8080, log into Ambari with admin:admin and see that components are being installed (note the installation of HDP will take quite a while and requires a solid internet connection).
-
 #### Useful Vagrant commands
 
 ```sh
@@ -52,14 +53,32 @@ vagrant ssh [hostname]  # ssh into the given hostname (specified at the top of t
 vagrant provision       # rerun the ansible provisioning steps on the running machines
 ```
 
-## Running the demo
+## Running the demo with HDP
+
+### Provision the HDP machine
+
+1. Uncomment the HDP machine in the Vagrantfile machine listing:
+
+    ```ruby
+    machines = [
+        {:name => "elasticsearch", :ip => "192.168.56.42", :memory => 1024, :groups => ["elastic"]},
+        {:name => "couchbase", :ip => "192.168.56.41", :memory => 1024, :groups => ["couchbase"]},
+    #    {:name => "hdp", :ip => "192.168.56.43", :memory => 4096, :groups => ["hdp"]},
+        {:name => "node", :ip => "192.168.56.44", :memory => 1024, :groups => ["nodejs"]}
+    ]
+    ```
+
+2. Run/rerun ```vagrant up```. It's ok if the other machines are already running, this time only the HDP machine will be provisioned.
+
+After the HDP machine has been provisioned, you should be able to open http://hdp.demo:8080, log into Ambari with admin:admin and see that components are being installed (note the installation of HDP will take quite a while and requires a solid internet connection).
 
 ### Setup
 
-1. add a twitter4j.properties to src/main/resources with consumer and api keys and secrets (see https://dev.twitter.com/ for help)
-2. after HDP has fully installed, run the following to create a new Kafka topic (NOTE: ssh into the hdp node with 'vagrant ssh hdp.demo' first):
+1. Add a twitter4j.properties to storm-search-demo/src/main/resources with consumer and api keys and secrets, there should be a template in that directory. (See https://apps.twitter.com/ for help obtaining keys)
+2. After HDP has fully installed, run the following to create a new Kafka topic:
 
    ```sh
+   # on hdp.demo (use 'vagrant ssh hdp')
    cd /usr/hdp/current/kafka-broker/
    bin/kafka-topics.sh --create --zookeeper hdp.demo:2181 --replication-factor 1 --partitions 1 --topic twitter
    ```
@@ -96,15 +115,9 @@ vagrant provision       # rerun the ansible provisioning steps on the running ma
    storm jar /vagrant/storm-search-demo-1.0-SNAPSHOT.jar com.avalonconsult.TwitterIngestTopology
    ```
 
-At this point, you should be able to see things happening in the Storm UI (http://hdp.demo:8744/).  Click on twitter-ingest-topology to see statistics and throughput.  Visit the Couchbase UI to see documents as they are inserted into the document store (http://couchbase.demo:8091/, couchbase:couchbase for user:pass).  Finally, you can query the Elasticsearch instance and view documents (http://elasticsearch.demo:9200/demo/couchbaseDocument/_search?pretty&q=*)
+At this point, you should be able to see things happening in the Storm UI (http://hdp.demo:8744/).  Click on twitter-ingest-topology to see statistics and throughput.  Visit the Couchbase UI to see documents as they are inserted into the document store (http://couchbase.demo:8091/, with credentials couchbase:couchbase).  Finally, you can query the Elasticsearch instance and view documents (http://elasticsearch.demo:9200/demo/couchbaseDocument/_search?pretty&q=*)
 
-### To Run the Webapp
-
-Open the webapp in the browser: go to http://node.demo:8000/app/
-* Feel free to modify this webapp as needed.  It uses elasticui (http://www.elasticui.com/).  This app can be more sophisticated and as time permits more work will be added to it.
-* Its an app that find the latest tweets elastic search gets and display them.  They will be displayed in date time order.  The UI refreshes every few seconds.  You can also search and see filters on user names (although the names are currently displayed after analysis).
-
-## If you don't want to work with the Hadoop part
+## Running the demo without HDP
 
 It is possible to bypass the Hadoop portion of the demo and load some sample data directly into Couchbase.  Note that a bulk import into Couchbase will still be mirrored over to Elasticsearch, so the data will be in both places.  Here are the steps to setup a clean Couchbase/Elasticsearch environment with no HDP node and sample data imported:
 
@@ -117,36 +130,23 @@ vagrant up couchbase
 vagrant ssh couchbase -c "/opt/couchbase/bin/cbrestore /vagrant/files/sample_data/cb_backup/ http://localhost:8091 --bucket-source=demo --bucket-destination=demo"
 ```
 
-The sample dataset in hdp-es-cb-demo/files/sample\_data/cb_backup contains roughly a thousand tweets dumped from a Couchbase instance that were ingested/processed using Storm.
+The sample dataset in vagrant/files/sample\_data/cb_backup contains roughly a thousand tweets dumped from a Couchbase instance that were ingested/processed using Storm.
 
 Also, for those interested, this is what you would run if you wanted to back up your own Couchbase instance:
+
 ```sh
 /opt/couchbase/bin/cbbackup http://localhost:8091 /home/vagrant/cb_backup -u couchbase -p couchbase -b demo
 ```
+
 This command creates a backup of the demo bucket under /home/vagrant/cb_backup
 
-## Running Kibana
-Kibana should be started after provisioning the Elasticsearch node.  However, if for some reason Kibana isn't started, Elasticsearch must be running in order for Kibana to successfully start.  If you are having issues getting Kibana to run, you can either reprovision with:
 
-```sh
-# from hdp-es-cb-demo/ on host machine
-vagrant provision elasticsearch
-```
+## To Run the Webapp
 
-Otherwise, try the following steps to get Kibana running:
+Open the webapp in the browser: go to http://node.demo:8000/app/
 
-```sh
-vagrant ssh elasticsearch
-sudo service elasticsearch status
-
-# If elasticsearch is running, you can start Kibana
-sudo service kibana4 start
-
-# Otherwise, start Elasticsearch, wait, then start Kibana
-sudo service elasticsearch start
-# wait until elasticsearch is up
-sudo service kibana4 start
-```
+* Feel free to modify this webapp as needed.  It uses elasticui (http://www.elasticui.com/).  This app can be more sophisticated and as time permits more work will be added to it.
+* It's an app that finds the latest tweets Elasticsearch gets and displays them.  They will be displayed in date time order.  The UI refreshes every few seconds.  You can also search and see filters on user names (although the names are currently displayed after analysis).
 
 ## Resetting Couchbase and Elasticsearch
 It is nice to not have to rebuild the environment from scratch just to reset the data in Couchbase and Elasticsearch.
@@ -168,7 +168,7 @@ vagrant ssh elasticsearch
 ```
 
 ## Running Hive Analytics
-The script hdp-es-cb-demo/scripts/create_table.q will place an external Hive table (called tweets) over the HDFS directory /tmp/tweets.  All you need to do is run the script.  The table will be created regardless of whether or not any data exists in the directory.
+The script vagrant/scripts/create_table.q will place an external Hive table (called tweets) over the HDFS directory /tmp/tweets.  All you need to do is run the script.  The table will be created regardless of whether or not any data exists in the directory.
 
 ```sh
 vagrant ssh hdp
@@ -202,6 +202,7 @@ Stderr from the command:
 mount.nfs: access denied by server while mounting 192.168.56.1:/Users/kruthar/projects/elasticsearch/hdp-es-cb-demo
 ```
 you may have some conflicting shared directory information stored in /etc/exports on your local machine. Remove any lines that pertain to this project and try again.
+
 ### Ambari fails to install components
 Ambari is prone to failure during cluster initialization and installation of it's components. A lot of the time this is due to timeouts because of long package downloads or some other long running process. Due to the automatic nature of the setup process, there is not an easy way to restart/continue the install after it fails. The solution is to use the master-service-reinstall script. This script will use the Ambari REST service to read the configured components of the cluster, and reinstall them.
 
@@ -210,3 +211,27 @@ You can use the script by editing the configurations at the top of the script to
 ```sh
 ./master-service-reinstall.sh
 ```
+
+### Kibana is not running
+Kibana should be started after provisioning the Elasticsearch node.  However, if for some reason Kibana isn't started, Elasticsearch must be running in order for Kibana to successfully start.  If you are having issues getting Kibana to run, you can either reprovision with:
+
+```sh
+# from hdp-es-cb-demo/ on host machine
+vagrant provision elasticsearch
+```
+
+Otherwise, try the following steps to get Kibana running:
+
+```sh
+vagrant ssh elasticsearch
+sudo service elasticsearch status
+
+# If elasticsearch is running, you can start Kibana
+sudo service kibana4 start
+
+# Otherwise, start Elasticsearch, wait, then start Kibana
+sudo service elasticsearch start
+# wait until elasticsearch is up
+sudo service kibana4 start
+```
+
