@@ -6,7 +6,7 @@ It automatically provisions three virtual machines running CentOS 6:
 
 * one node hosting a Couchbase server
 * one node hosting an Elasticsearch server
-* one node hosting two different search applications
+* one node hosting a search application
 
 There is also a fully functional one node Hadoop cluster running Hortonworks HDP for live streaming and processing of Twitter data. This machine is by default turned OFF as it takes awhile to provision, and automatically installing HDP is not highly reliable. Instructions for provisioning this machine into the data flow are listed below.
 

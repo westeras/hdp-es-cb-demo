@@ -25,7 +25,6 @@ Help us make the commit history pretty by following this commit style guide.
 
 * Prefix your commit with a tag in brackets. Some useful tags:
     * [elasticapp] - for changes to the elasticsearch-twitter-webapp
-    * [searchapp] - for changes to the searchapp
     * [stormapp] - for changes to the storm-search-app
     * [vagrant] - for changes to Vagrant artifacts
     * [docs] - for changes to .md files or other documentation
